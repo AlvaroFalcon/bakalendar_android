@@ -1,4 +1,4 @@
-package com.frostfel.sampleproject
+package com.frostfel.animelist
 
 import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp

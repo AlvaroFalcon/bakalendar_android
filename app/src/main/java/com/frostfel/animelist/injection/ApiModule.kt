@@ -1,6 +1,6 @@
-package com.frostfel.sampleproject.injection
+package com.frostfel.animelist.injection
 
-import com.frostfel.sampleproject.data.ApiServices
+import com.frostfel.animelist.data.ApiServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

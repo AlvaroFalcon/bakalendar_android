@@ -1,4 +1,4 @@
-package com.frostfel.sampleproject.data
+package com.frostfel.animelist.data
 
 import retrofit2.http.Body
 import retrofit2.http.POST

@@ -1,4 +1,4 @@
-package com.frostfel.sampleproject
+package com.frostfel.animelist
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

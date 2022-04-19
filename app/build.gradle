@@ -11,7 +11,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.frostfel.sampleproject"
+        applicationId "com.frostfel.animelist"
         minSdk 24
         targetSdk 32
         versionCode 1
