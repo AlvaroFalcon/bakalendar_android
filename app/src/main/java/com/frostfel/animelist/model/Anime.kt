@@ -29,4 +29,12 @@ data class Anime (
     @SerializedName("background") val background: String,
     @SerializedName("season") val season: String,
     @SerializedName("year") val year: String,
+    @SerializedName("broadcast") val broadcast: Broadcast,
+    @SerializedName("producers") val producers: List<GenericMalData>,
+    @SerializedName("licensors") val licensors: List<GenericMalData>,
+    @SerializedName("studios") val studios: List<GenericMalData>,
+    @SerializedName("genres") val genres: List<GenericMalData>,
+    @SerializedName("explicit_genres") val explicit_genres: List<GenericMalData>,
+    @SerializedName("themes") val themes: List<GenericMalData>,
+    @SerializedName("demographics") val demographics: List<GenericMalData>,
 )
