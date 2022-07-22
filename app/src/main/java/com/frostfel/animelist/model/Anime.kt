@@ -34,7 +34,7 @@ data class Anime (
     @SerializedName("licensors") val licensors: List<GenericMalData>,
     @SerializedName("studios") val studios: List<GenericMalData>,
     @SerializedName("genres") val genres: List<GenericMalData>,
-    @SerializedName("explicit_genres") val explicit_genres: List<GenericMalData>,
+    @SerializedName("explicit_genres") val explicitGenres: List<GenericMalData>,
     @SerializedName("themes") val themes: List<GenericMalData>,
     @SerializedName("demographics") val demographics: List<GenericMalData>,
 )

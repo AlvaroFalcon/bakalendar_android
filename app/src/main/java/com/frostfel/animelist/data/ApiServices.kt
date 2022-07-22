@@ -1,8 +1,8 @@
 package com.frostfel.animelist.data
 
-import retrofit2.http.POST
+import retrofit2.http.GET
 
 interface ApiServices {
-    @POST("seasons/now")
-    suspend fun authenticateUser(): Any
+    @GET("seasons/now")
+    suspend fun getCurrentSeason(): Any
 }
