@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SeasonAnimeFragment : Fragment() {
     private val viewModel by viewModels<SeasonAnimeViewModel>()
     private lateinit var binding: SeasonAnimeFragmentBinding
@@ -20,6 +22,7 @@ class SeasonAnimeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        context?.let { viewModel.getData(it) }
         binding = SeasonAnimeFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }

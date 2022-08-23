@@ -17,7 +17,7 @@ data class Anime (
     @SerializedName("status") val status: String,
     @SerializedName("airing") val airing: Boolean,
     @SerializedName("aired") val aired: Aired,
-    @SerializedName("duration") val duration: Int,
+    @SerializedName("duration") val duration: String,
     @SerializedName("rating") val rating: String,
     @SerializedName("score") val score: Double,
     @SerializedName("scored_by") val scoredBy: Int,
