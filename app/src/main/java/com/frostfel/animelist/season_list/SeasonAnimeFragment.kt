@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,9 +23,20 @@ class SeasonAnimeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        context?.let { viewModel.getData(it) }
+        setObserver()
+        refreshData()
         binding = SeasonAnimeFragmentBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    private fun refreshData() {
+        context?.let { viewModel.retrieveData(it) }
+    }
+
+    private fun setObserver() {
+        viewModel.animeData.observe(viewLifecycleOwner, Observer {
+            // set data to adapter
+        })
     }
 
 }
