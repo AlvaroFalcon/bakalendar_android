@@ -25,7 +25,6 @@ class AnimeListAdapter() : RecyclerView.Adapter<AnimeListAdapter.ViewHolder>() {
     fun setData(data: List<Anime>) {
         if(animeData.isNotEmpty()) return
         this.animeData.addAll(data)
-        println("ALVARO COUNT ${data.size}")
         notifyDataSetChanged()
     }
 
