@@ -21,7 +21,7 @@ class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>
 
     class ViewHolder(private val binding: AnimeListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(anime: Anime) {
-            binding.text.text = anime.title
+            binding.headerTitleText.text = anime.title
         }
     }
 
