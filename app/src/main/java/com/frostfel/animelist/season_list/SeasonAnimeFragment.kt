@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
 import com.frostfel.animelist.season_list.adapter.AnimeListAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SeasonAnimeFragment : Fragment() {
@@ -26,7 +28,6 @@ class SeasonAnimeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         observeData()
-        refreshData()
         binding = SeasonAnimeFragmentBinding.inflate(inflater, container, false)
         initView(binding)
         return binding.root
@@ -37,17 +38,13 @@ class SeasonAnimeFragment : Fragment() {
         binding.recylcerView.adapter = adapter
     }
 
-    private fun refreshData() {
-        context?.let { viewModel.retrieveData(it) }
-    }
-
     private fun observeData() {
-        viewModel.animeData.observe(viewLifecycleOwner) {
-            // set data to adapter
-            activity?.runOnUiThread {
-                adapter.setData(it)
+        lifecycleScope.launch {
+            viewModel.retrieveData().observe(viewLifecycleOwner) {
+                it?.let {
+                    adapter.submitData(lifecycle, it)
+                }
             }
         }
     }
-
 }
