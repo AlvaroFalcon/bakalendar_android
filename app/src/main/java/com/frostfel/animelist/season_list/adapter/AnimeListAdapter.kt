@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.frostfel.animelist.databinding.AnimeListItemBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.getNextBroadcastString
+import com.frostfel.animelist.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso
 import java.time.LocalDateTime
 
@@ -28,7 +29,10 @@ class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>
             binding.animeTitle.text = anime.title
             binding.description.text = anime.synopsis
             Picasso.get().load(anime.images.webp.largeImageUrl).into(binding.image)
-
+            val adapter = GenreListAdapter()
+            if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(AnimeListItemDecorator())
+            adapter.setData(anime.genres)
+            binding.genreContainer.adapter = adapter
         }
     }
 

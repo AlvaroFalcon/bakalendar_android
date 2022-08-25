@@ -17,6 +17,7 @@ data class Broadcast(
 
 fun Broadcast.getNextBroadcastString(context: Context): String {
     val day = DayOfWeek.from(this.day)
+    if (day == DayOfWeek.UNKNOWN) return stringValue
     val broadcastHour = this.time.split(":")[0].toInt()
     val broadcastMinute = this.time.split(":")[1].toInt()
     val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -75,6 +76,6 @@ fun Broadcast.getNextBroadcastString(context: Context): String {
             context.getString(R.string.two_values_airing, airingHoursLeft, airingMinutesLeft)
         }
     } else {
-        context.getString(R.string.two_values_airing, airingDaysLeft, airingMinutesLeft)
+        context.getString(R.string.two_values_airing, airingDaysLeft, airingHoursLeft)
     }
 }

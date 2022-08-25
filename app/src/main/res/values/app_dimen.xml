@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="first_item_left_offset">0dp</dimen>
+    <dimen name="left_offset">4dp</dimen>
+    <dimen name="right_offset">4dp</dimen>
+</resources>

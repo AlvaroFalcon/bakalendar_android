@@ -11,8 +11,8 @@ enum class DayOfWeek(val value: Int, val strValue: String) {
     UNKNOWN(8, "UNKNOWN");
 
     companion object {
-        fun from(day: String): DayOfWeek {
-            return when (day.lowercase()) {
+        fun from(day: String?): DayOfWeek {
+            return when (day?.lowercase()) {
                 MONDAY.strValue -> MONDAY
                 TUESDAY.strValue -> TUESDAY
                 WEDNESDAY.strValue -> WEDNESDAY
