@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.frostfel.animelist.databinding.AnimeListItemBinding
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.getNextBroadcastString
+import com.squareup.picasso.Picasso
+import java.time.LocalDateTime
 
 class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
 
@@ -21,7 +24,11 @@ class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>
 
     class ViewHolder(private val binding: AnimeListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(anime: Anime) {
-            binding.headerTitleText.text = anime.title
+            binding.headerTitleText.text = anime.broadcast.getNextBroadcastString(binding.root.context)
+            binding.animeTitle.text = anime.title
+            binding.description.text = anime.synopsis
+            Picasso.get().load(anime.images.webp.largeImageUrl).into(binding.image)
+
         }
     }
 

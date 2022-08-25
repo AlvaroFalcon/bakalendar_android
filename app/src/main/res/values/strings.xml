@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Seasonal Anime list</string>
+    <plurals name="airing_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <plurals name="airing_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+
+    <plurals name="airing_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <string name="two_values_airing">Next episode in %1$s, %2$s</string>
+    <string name="one_value_airing">Next Episode in %1$s</string>
 </resources>
