@@ -28,15 +28,15 @@ fun Broadcast.getNextBroadcastString(context: Context): String {
         .withZoneSameInstant(ZoneId.of(this.timeZone)).withHour(broadcastHour)
         .withMinute(broadcastMinute).withSecond(0)
     val nextBroadcastDate = when {
-        day.value > zonedDateTime.dayOfWeek.value -> {
+        day.value > todayZoned.dayOfWeek.value -> {
             // broadcast day after today
             val broadcastDate =
                 zonedDateTime.plusDays((day.value - zonedDateTime.dayOfWeek.value).toLong())
             broadcastDate
         }
-        day.value == zonedDateTime.dayOfWeek.value -> {
+        day.value == todayZoned.dayOfWeek.value -> {
             // broadcast the same day
-            val broadcastDate = if (broadcastHour < zonedDateTime.hour) {
+            val broadcastDate = if (broadcastHour < todayZoned.hour) {
                 // this already happened
                 zonedDateTime.plusDays(7L)
             } else {
