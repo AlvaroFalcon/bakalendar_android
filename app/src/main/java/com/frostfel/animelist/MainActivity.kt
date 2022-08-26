@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
                 R.anim.fade_in,
                 R.anim.slide_out
             )
-            replace(R.id.fragmentContainer, fragment)
+            add(R.id.fragmentContainer, fragment)
             addToBackStack(AnimeDetailFragment::class.simpleName)
         }
     }
