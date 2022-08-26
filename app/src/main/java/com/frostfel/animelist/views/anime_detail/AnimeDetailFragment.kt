@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import com.frostfel.animelist.databinding.FragmentAnimeDetailBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.getNextBroadcastString
+import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
 import com.frostfel.animelist.views.season_list.adapter.GenreListAdapter
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso

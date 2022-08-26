@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.frostfel.animelist.MainActivityViewModel
 import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
+import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -20,8 +21,9 @@ class SeasonAnimeFragment : Fragment() {
     private val viewModel by viewModels<SeasonAnimeViewModel>()
     private val activityViewModel by activityViewModels<MainActivityViewModel>()
     private lateinit var binding: SeasonAnimeFragmentBinding
-    private val adapter = AnimeListAdapter() {
-        activityViewModel.navigator.navigateToAnimeDetail(it)
+    private val adapter = AnimeListAdapter { anime ->
+        activityViewModel.navigator.navigateToAnimeDetail(anime)
+
     }
 
     companion object {

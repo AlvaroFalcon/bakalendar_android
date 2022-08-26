@@ -21,14 +21,23 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
 
     override fun navigateToAnimeListFragment() {
         supportFragmentManager.commit {
-            replace(R.id.fragmentContainer, SeasonAnimeFragment.newInstance())
+            val fragment = SeasonAnimeFragment.newInstance()
+            replace(R.id.fragmentContainer, fragment)
         }
     }
 
     override fun navigateToAnimeDetail(anime: Anime) {
+        val fragment = AnimeDetailFragment.newInstance(anime)
+
         supportFragmentManager.commit {
-            replace(R.id.fragmentContainer, AnimeDetailFragment.newInstance(anime))
-                .addToBackStack(AnimeDetailFragment::class.simpleName)
+            setCustomAnimations(
+                R.anim.slide_in,
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.slide_out
+            )
+            replace(R.id.fragmentContainer, fragment)
+            addToBackStack(AnimeDetailFragment::class.simpleName)
         }
     }
 }
