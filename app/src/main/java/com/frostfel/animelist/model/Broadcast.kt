@@ -1,19 +1,21 @@
 package com.frostfel.animelist.model
 
 import android.content.Context
+import android.os.Parcelable
 import com.frostfel.animelist.R
 import com.frostfel.animelist.data.DayOfWeek
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-
+@Parcelize
 data class Broadcast(
     @SerializedName("day") val day: String,
     @SerializedName("time") val time: String,
     @SerializedName("timezone") val timeZone: String,
     @SerializedName("string") val stringValue: String,
-)
+) : Parcelable
 
 fun Broadcast.getNextBroadcastString(context: Context): String {
     val day = DayOfWeek.from(this.day)

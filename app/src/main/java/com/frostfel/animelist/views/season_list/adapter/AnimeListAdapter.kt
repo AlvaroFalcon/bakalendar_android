@@ -11,7 +11,7 @@ import com.frostfel.animelist.model.getNextBroadcastString
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso
 
-class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
+class AnimeListAdapter(private val onClickAnime: (anime: Anime) -> Unit) : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -20,10 +20,10 @@ class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(getItem(position)!!)
+        holder.bind(getItem(position)!!, onClickAnime)
 
     class ViewHolder(private val binding: AnimeListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(anime: Anime) {
+        fun bind(anime: Anime, onClickAnime: (anime: Anime) -> Unit) {
             binding.headerTitleText.text = anime.broadcast.getNextBroadcastString(binding.root.context)
             binding.animeTitle.text = anime.title
             binding.description.text = anime.synopsis
@@ -32,6 +32,7 @@ class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>
             if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(AnimeListItemDecorator())
             adapter.setData(anime.genres)
             binding.genreContainer.adapter = adapter
+            binding.root.setOnClickListener { onClickAnime(anime) }
         }
     }
 
