@@ -1,8 +1,8 @@
 package com.frostfel.animelist.injection
 
 import com.frostfel.animelist.data.ApiServices
-import com.frostfel.animelist.season_list.repository.AnimeRepository
-import com.frostfel.animelist.season_list.repository.AnimeRepositoryImpl
+import com.frostfel.animelist.views.season_list.repository.AnimeRepository
+import com.frostfel.animelist.views.season_list.repository.AnimeRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list.repository
+package com.frostfel.animelist.views.season_list.repository
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingData

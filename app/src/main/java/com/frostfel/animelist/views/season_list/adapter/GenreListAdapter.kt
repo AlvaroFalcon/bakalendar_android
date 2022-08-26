@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list.adapter
+package com.frostfel.animelist.views.season_list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

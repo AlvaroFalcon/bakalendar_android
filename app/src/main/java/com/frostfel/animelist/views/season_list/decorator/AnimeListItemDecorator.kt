@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list.decorator
+package com.frostfel.animelist.views.season_list.decorator
 
 import android.graphics.Rect
 import android.view.View

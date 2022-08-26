@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list.adapter
+package com.frostfel.animelist.views.season_list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,9 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.frostfel.animelist.databinding.AnimeListItemBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.getNextBroadcastString
-import com.frostfel.animelist.season_list.decorator.AnimeListItemDecorator
+import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso
-import java.time.LocalDateTime
 
 class AnimeListAdapter() : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
 

@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list.paging
+package com.frostfel.animelist.views.season_list.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

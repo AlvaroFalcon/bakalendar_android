@@ -3,7 +3,7 @@ package com.frostfel.animelist
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.frostfel.animelist.season_list.SeasonAnimeFragment
+import com.frostfel.animelist.views.season_list.SeasonAnimeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

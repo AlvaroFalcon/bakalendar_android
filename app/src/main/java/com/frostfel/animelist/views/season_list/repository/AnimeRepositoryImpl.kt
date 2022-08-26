@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list.repository
+package com.frostfel.animelist.views.season_list.repository
 
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.liveData
 import com.frostfel.animelist.data.ApiServices
 import com.frostfel.animelist.model.Anime
-import com.frostfel.animelist.season_list.paging.AnimePagingSource
+import com.frostfel.animelist.views.season_list.paging.AnimePagingSource
 import javax.inject.Inject
 
 class AnimeRepositoryImpl @Inject constructor(

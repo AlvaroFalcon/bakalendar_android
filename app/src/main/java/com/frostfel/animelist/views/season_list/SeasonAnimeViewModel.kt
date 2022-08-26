@@ -1,4 +1,4 @@
-package com.frostfel.animelist.season_list
+package com.frostfel.animelist.views.season_list
 
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.frostfel.animelist.model.Anime
-import com.frostfel.animelist.season_list.repository.AnimeRepository
+import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
