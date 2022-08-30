@@ -53,7 +53,7 @@ class SeasonAnimeFragment : Fragment() {
         lifecycleScope.launch {
             binding.searchView.getQueryFlow()
                 .drop(1)
-                .debounce(300L)
+                .debounce(200L)
                 .distinctUntilChanged()
                 .collect {
                     viewModel.filterText.postValue(it)
