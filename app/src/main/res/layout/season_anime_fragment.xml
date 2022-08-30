@@ -7,16 +7,11 @@
     tools:context=".views.season_list.SeasonAnimeFragment">
 
 
-    <com.google.android.material.textfield.TextInputEditText
+    <com.frostfel.animelist.views.AnimeSearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search something..."
-        android:textColorHint="@color/gray"
-        android:gravity="center"
         android:layout_margin="22dp"
-        android:background="@drawable/searchbar_shape"
-        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
