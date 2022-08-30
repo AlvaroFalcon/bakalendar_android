@@ -16,4 +16,5 @@
     </plurals>
     <string name="two_values_airing">Next episode in %1$s, %2$s</string>
     <string name="one_value_airing">Next Episode in %1$s</string>
+    <string name="search_view_placeholder">Search something…</string>
 </resources>
