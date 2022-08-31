@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Seasonal Anime list</string>
+    <string name="app_name">BaKalendar</string>
     <plurals name="airing_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
