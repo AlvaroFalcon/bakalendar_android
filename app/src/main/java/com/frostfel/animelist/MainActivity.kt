@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     private val viewModel by viewModels<MainActivityViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        hideSystemUI()
         setContentView(R.layout.activity_main)
         viewModel.initViewModel(this)
         navigateToAnimeListFragment()
@@ -28,6 +27,11 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
             val fragment = SeasonAnimeFragment.newInstance()
             replace(R.id.fragmentContainer, fragment)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideSystemUI()
     }
 
     private fun hideSystemUI() {
