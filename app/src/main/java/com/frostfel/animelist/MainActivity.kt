@@ -3,6 +3,9 @@ package com.frostfel.animelist
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.views.anime_detail.AnimeDetailFragment
@@ -14,6 +17,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     private val viewModel by viewModels<MainActivityViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hideSystemUI()
         setContentView(R.layout.activity_main)
         viewModel.initViewModel(this)
         navigateToAnimeListFragment()
@@ -23,6 +27,14 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         supportFragmentManager.commit {
             val fragment = SeasonAnimeFragment.newInstance()
             replace(R.id.fragmentContainer, fragment)
+        }
+    }
+
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
