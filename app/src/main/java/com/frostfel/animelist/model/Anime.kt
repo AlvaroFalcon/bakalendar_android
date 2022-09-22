@@ -1,12 +1,17 @@
 package com.frostfel.animelist.model
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+@Entity
 @Parcelize
 data class Anime (
-    @SerializedName("mal_id") val malId: Int,
+    @PrimaryKey(autoGenerate = false)
+    @SerializedName
+    ("mal_id") val malId: Int,
     @SerializedName("url") val url: String,
     @SerializedName("images") val images: Images,
     @SerializedName("trailer") val trailer: TrailerInfo,
@@ -40,4 +45,5 @@ data class Anime (
     @SerializedName("explicit_genres") val explicitGenres: List<GenericMalData>,
     @SerializedName("themes") val themes: List<GenericMalData>,
     @SerializedName("demographics") val demographics: List<GenericMalData>,
+    val starred: Boolean = false
 ) : Parcelable
