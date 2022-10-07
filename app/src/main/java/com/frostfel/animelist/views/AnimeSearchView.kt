@@ -55,11 +55,7 @@ class AnimeSearchView : ConstraintLayout {
                     }
                 }
                 val drawableStart = if (focused) ResourcesCompat.getDrawable(resources, R.drawable.ic_search_ic,  null) else null
-                searchField.setCompoundDrawablesRelativeWithIntrinsicBounds(drawableStart, null, null, null)
-
-                val padding = if(focused) 18 else 0
-                searchField.compoundDrawablePadding = padding
-
+                searchLayout.startIconDrawable = drawableStart
                 if (focused) clearView.visibility = View.VISIBLE else clearView.visibility = GONE
             }
 

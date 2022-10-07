@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.67" />
         <entry key="..\:/Users/Alvaro PC/Documents/Proyectos/SampleProject/app/src/main/res/layout/activity_main.xml" value="0.29375" />
         <entry key="..\:/Users/Alvaro PC/Documents/Proyectos/anime_list_season_android/app/src/main/res/drawable/genre_background.xml" value="0.314" />
         <entry key="..\:/Users/Alvaro PC/Documents/Proyectos/anime_list_season_android/app/src/main/res/drawable/searchbar_shape.xml" value="0.335" />
@@ -14,6 +15,10 @@
         <entry key="..\:/Users/Alvaro PC/Documents/Proyectos/anime_list_season_android/app/src/main/res/layout/genre_list_item.xml" value="2.132142857142857" />
         <entry key="..\:/Users/Alvaro PC/Documents/Proyectos/anime_list_season_android/app/src/main/res/layout/season_anime_fragment.xml" value="0.3109375" />
         <entry key="..\:/Users/Alvaro PC/Documents/Proyectos/anime_list_season_android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.4605" />
+        <entry key="app/src/main/res/drawable/ic_clear.xml" value="0.2455" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.3484375" />
+        <entry key="app/src/main/res/layout/anime_search_view.xml" value="0.3484375" />
+        <entry key="app/src/main/res/layout/season_anime_fragment.xml" value="0.3484375" />
       </map>
     </option>
   </component>
