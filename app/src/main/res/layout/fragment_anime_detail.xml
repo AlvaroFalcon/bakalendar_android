@@ -26,23 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/card_header_background"
-            android:gravity="end"
-            android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/header_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:textColor="@color/white" />
-        </LinearLayout>
+        <include android:id="@+id/header" layout="@layout/anime_item_header"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

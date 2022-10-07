@@ -25,7 +25,7 @@ class AnimeListAdapter(private val onClickAnime: (anime: Anime) -> Unit) : Pagin
 
     class ViewHolder(private val binding: AnimeListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(anime: Anime, onClickAnime: (anime: Anime) -> Unit) {
-            binding.headerTitleText.text = anime.broadcast.getNextBroadcastString(binding.root.context)
+            binding.header.headerTitleText.text = anime.broadcast.getNextBroadcastString(binding.root.context)
             binding.animeTitle.text = anime.title
             binding.description.text = anime.synopsis
             Picasso.get().load(anime.images.webp.largeImageUrl).into(binding.image)

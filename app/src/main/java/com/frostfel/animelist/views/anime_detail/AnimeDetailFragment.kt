@@ -47,7 +47,7 @@ class AnimeDetailFragment : Fragment() {
     private fun setupView(anime: Anime) {
         with(binding) {
             Picasso.get().load(anime.images.webp.largeImageUrl).into(image)
-            context?.let { headerTitleText.text = anime.broadcast.getNextBroadcastString(it) }
+            context?.let { header.headerTitleText.text = anime.broadcast.getNextBroadcastString(it) }
             animeTitle.text = anime.title
             description.text = anime.synopsis
             val adapter = GenreListAdapter()
