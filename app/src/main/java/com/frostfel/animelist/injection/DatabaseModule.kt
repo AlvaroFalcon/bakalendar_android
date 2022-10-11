@@ -3,6 +3,8 @@ package com.frostfel.animelist.injection
 import android.content.Context
 import androidx.room.Room
 import com.frostfel.animelist.data.AnimeDao
+import com.frostfel.animelist.data.AnimeDbRepository
+import com.frostfel.animelist.data.AnimeDbRepositoryImpl
 import com.frostfel.animelist.data.storage.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -18,6 +20,12 @@ class DatabaseModule {
     @Provides
     fun provideAnimeDao(appDatabase: AppDatabase): AnimeDao {
         return appDatabase.animeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAnimeDbRepository(animeDao: AnimeDao): AnimeDbRepository {
+        return AnimeDbRepositoryImpl(animeDao)
     }
 
     @Provides

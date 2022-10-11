@@ -12,7 +12,11 @@ import com.frostfel.animelist.model.getNextBroadcastString
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso
 
-class AnimeListAdapter(private val onClickAnime: (anime: Anime) -> Unit) : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
+class AnimeListAdapter(
+    private val onClickAnime: (anime: Anime) -> Unit,
+    private val onClickFav: (anime: Anime) -> Unit,
+    private val isAnimeStarred: (anime: Anime) -> Boolean
+) : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -20,24 +24,37 @@ class AnimeListAdapter(private val onClickAnime: (anime: Anime) -> Unit) : Pagin
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(getItem(position)!!, onClickAnime)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val anime = getItem(position)!!
+        holder.bind(anime, onClickAnime, onClickFav, isAnimeStarred(anime))
+    }
 
-    class ViewHolder(private val binding: AnimeListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(anime: Anime, onClickAnime: (anime: Anime) -> Unit) {
-            binding.header.headerTitleText.text = anime.broadcast.getNextBroadcastString(binding.root.context)
+    class ViewHolder(private val binding: AnimeListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(
+            anime: Anime,
+            onClickAnime: (anime: Anime) -> Unit,
+            onClickFav: (anime: Anime) -> Unit,
+            isStarred: Boolean
+        ) {
+            binding.header.headerTitleText.text =
+                anime.broadcast.getNextBroadcastString(binding.root.context)
             binding.animeTitle.text = anime.title
             binding.description.text = anime.synopsis
             Picasso.get().load(anime.images.webp.largeImageUrl).into(binding.image)
             val adapter = GenreListAdapter()
-            if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(AnimeListItemDecorator())
+            if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(
+                AnimeListItemDecorator()
+            )
             adapter.setData(anime.genres)
             binding.genreContainer.adapter = adapter
+            binding.header.favoriteButton.setState(isStarred)
+            binding.header.favoriteButton.setOnClickListener { onClickFav(anime) }
             binding.root.setOnClickListener { onClickAnime(anime) }
         }
     }
 
-    object AnimeComparator: DiffUtil.ItemCallback<Anime>() {
+    object AnimeComparator : DiffUtil.ItemCallback<Anime>() {
         override fun areItemsTheSame(oldItem: Anime, newItem: Anime): Boolean {
             return oldItem.malId == newItem.malId
         }

@@ -25,9 +25,13 @@ class SeasonAnimeFragment : Fragment() {
     private val viewModel by viewModels<SeasonAnimeViewModel>()
     private val activityViewModel by activityViewModels<MainActivityViewModel>()
     private lateinit var binding: SeasonAnimeFragmentBinding
-    private val adapter = AnimeListAdapter { anime ->
+    private val adapter = AnimeListAdapter({ anime ->
         activityViewModel.navigator.navigateToAnimeDetail(anime)
-    }
+    }, {
+        viewModel.onFavTap(it)
+    }, {
+        false
+    })
 
     companion object {
         fun newInstance() = SeasonAnimeFragment()
