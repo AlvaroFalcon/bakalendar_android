@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SeasonAnimeFragment : Fragment() {
+open class SeasonAnimeFragment : Fragment() {
     private val viewModel by viewModels<SeasonAnimeViewModel>()
     private val activityViewModel by activityViewModels<MainActivityViewModel>()
     private lateinit var binding: SeasonAnimeFragmentBinding

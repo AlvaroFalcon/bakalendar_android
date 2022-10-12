@@ -5,5 +5,5 @@ import androidx.paging.PagingData
 import com.frostfel.animelist.model.Anime
 
 interface AnimeRepository {
-    fun getAnimeList(): LiveData<PagingData<Anime>>
+    fun getAnimeList(isFav: Boolean): LiveData<PagingData<Anime>>
 }

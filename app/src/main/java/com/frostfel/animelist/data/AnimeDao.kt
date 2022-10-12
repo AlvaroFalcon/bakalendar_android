@@ -2,6 +2,8 @@ package com.frostfel.animelist.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -21,4 +23,7 @@ interface AnimeDao {
 
     @Query("SELECT * FROM anime")
     fun getAll(): LiveData<List<Anime>>
+
+    @Query("SELECT * FROM anime")
+    fun getAllNoLive(): List<Anime>
 }

@@ -1,7 +1,6 @@
 package com.frostfel.animelist.data
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.frostfel.animelist.model.Anime
 import javax.inject.Inject
 
@@ -26,5 +25,9 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
 
     override fun getAll(): LiveData<List<Anime>> {
         return animeDao.getAll()
+    }
+
+    override fun getAllNoLive(): List<Anime> {
+        return animeDao.getAllNoLive()
     }
 }

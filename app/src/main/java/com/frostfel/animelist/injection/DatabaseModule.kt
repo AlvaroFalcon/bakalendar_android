@@ -35,6 +35,6 @@ class DatabaseModule {
             appContext,
             AppDatabase::class.java,
             "BakalendarDB"
-        ).build()
+        ).allowMainThreadQueries().build()
     }
 }
