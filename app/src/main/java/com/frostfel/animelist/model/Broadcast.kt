@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.frostfel.animelist.R
 import com.frostfel.animelist.data.DayOfWeek
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit

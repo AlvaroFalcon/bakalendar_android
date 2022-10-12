@@ -19,6 +19,7 @@
         <entry key="app/src/main/res/drawable/ic_star.xml" value="0.209" />
         <entry key="app/src/main/res/drawable/ic_star_empty.xml" value="0.209" />
         <entry key="app/src/main/res/drawable/star_empty_ic.xml" value="0.209" />
+        <entry key="app/src/main/res/layout/activity_anime_detail.xml" value="0.2911458333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3484375" />
         <entry key="app/src/main/res/layout/anime_item_header.xml" value="0.33866666666666667" />
         <entry key="app/src/main/res/layout/anime_list_item.xml" value="0.20244565217391305" />

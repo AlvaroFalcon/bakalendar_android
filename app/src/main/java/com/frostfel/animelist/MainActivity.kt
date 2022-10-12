@@ -1,5 +1,6 @@
 package com.frostfel.animelist
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,7 @@ import androidx.fragment.app.commit
 import com.frostfel.animelist.databinding.ActivityMainBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.pager.AnimeListPagerAdapter
+import com.frostfel.animelist.views.anime_detail.AnimeDetailActivity
 import com.frostfel.animelist.views.anime_detail.AnimeDetailFragment
 import com.frostfel.animelist.views.season_list.SeasonAnimeFragment
 import com.google.android.material.tabs.TabLayoutMediator
@@ -26,13 +28,20 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        tabTitles = arrayOf(resources.getString(R.string.all_tab_title), resources.getString(R.string.favorites_tab_title))
-        binding.pager.adapter = adapter
-        TabLayoutMediator(binding.tabLayout, binding.pager) {tab, position ->
-            tab.text = tabTitles[position]
-        }.attach()
+        initView()
         viewModel.initViewModel(this)
         navigateToAnimeListFragment()
+    }
+
+    private fun initView() {
+        tabTitles = arrayOf(
+            resources.getString(R.string.all_tab_title),
+            resources.getString(R.string.favorites_tab_title)
+        )
+        binding.pager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+            tab.text = tabTitles[position]
+        }.attach()
     }
 
     override fun navigateToAnimeListFragment() {
@@ -56,17 +65,9 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     }
 
     override fun navigateToAnimeDetail(anime: Anime) {
-        val fragment = AnimeDetailFragment.newInstance(anime)
-
-        supportFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_in,
-                R.anim.fade_out,
-                R.anim.fade_in,
-                R.anim.slide_out
-            )
-            //add(R.id.fragmentContainer, fragment)
-            //addToBackStack(AnimeDetailFragment::class.simpleName)
-        }
+        val detailIntent = Intent(this, AnimeDetailActivity::class.java)
+        val bundle = Bundle().apply { putParcelable(AnimeDetailActivity.ANIME_EXTRA, anime) }
+        detailIntent.putExtras(bundle)
+        startActivity(detailIntent)
     }
 }
