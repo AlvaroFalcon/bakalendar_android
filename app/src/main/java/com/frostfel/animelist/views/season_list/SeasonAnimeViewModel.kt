@@ -18,17 +18,21 @@ class SeasonAnimeViewModel @Inject constructor(
     private val animeRepository: AnimeRepository,
     private val animeDbRepository: AnimeDbRepository
 ) : ViewModel(), LifecycleObserver {
+    var isFav = false
     val filterText : MutableLiveData<String> = MutableLiveData("")
     val favAnime : LiveData<List<Anime>> = animeDbRepository.getAll()
     fun retrieveData(filter: String): Flow<PagingData<Anime>> {
-        return animeRepository.getAnimeList(true).asFlow()
+        return animeRepository.getAnimeList(isFav).asFlow()
             .map { it.filter { item -> item.title?.contains(filter, ignoreCase = true) == true } }
             .cachedIn(viewModelScope)
     }
 
-    fun onFavTap(anime: Anime) {
+    fun onFavTap(anime: Anime, callback: () -> Unit) {
         viewModelScope.launch {
             animeDbRepository.addOrRemove(anime)
+            if(isFav) {
+                callback()
+            }
         }
     }
 }

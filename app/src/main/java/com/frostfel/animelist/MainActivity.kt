@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
 
     override fun navigateToAnimeListFragment() {
         supportFragmentManager.commit {
-            val fragment = SeasonAnimeFragment.newInstance()
+            val fragment = SeasonAnimeFragment.newInstance(true)
             replace(R.id.fragmentContainer, fragment)
         }
     }

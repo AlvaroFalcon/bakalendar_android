@@ -1,13 +1,11 @@
 package com.frostfel.animelist.views.season_list
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,11 +26,26 @@ open class SeasonAnimeFragment : Fragment() {
     private val adapter = AnimeListAdapter({ anime ->
         activityViewModel.navigator.navigateToAnimeDetail(anime)
     }, {
-        viewModel.onFavTap(it)
+        viewModel.onFavTap(it) {
+            setTextQuery(binding.searchView.getQuery())
+        }
     })
 
     companion object {
-        fun newInstance() = SeasonAnimeFragment()
+        const val IS_FAV_PARAM = "IS_FAV_PARAM"
+        fun newInstance(isFav: Boolean) =
+            SeasonAnimeFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(IS_FAV_PARAM, isFav)
+                }
+            }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            viewModel.isFav = it.getBoolean(IS_FAV_PARAM)
+        }
     }
 
     override fun onCreateView(

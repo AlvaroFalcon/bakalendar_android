@@ -19,7 +19,11 @@ class AnimeSearchView : ConstraintLayout {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     private val inflater = LayoutInflater.from(context)
     private val binding = AnimeSearchViewBinding.inflate(inflater, this, true)
@@ -33,7 +37,8 @@ class AnimeSearchView : ConstraintLayout {
     private fun setupEvents() {
         with(binding) {
             clearView.setOnClickListener {
-                val imm: InputMethodManager? = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                val imm: InputMethodManager? =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.hideSoftInputFromWindow(searchField.windowToken, 0)
                 onClearClicked()
                 searchField.clearFocus()
@@ -54,12 +59,20 @@ class AnimeSearchView : ConstraintLayout {
                         Gravity.CENTER
                     }
                 }
-                val drawableStart = if (focused) ResourcesCompat.getDrawable(resources, R.drawable.ic_search_ic,  null) else null
+                val drawableStart = if (focused) ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_search_ic,
+                    null
+                ) else null
                 searchLayout.startIconDrawable = drawableStart
                 if (focused) clearView.visibility = View.VISIBLE else clearView.visibility = GONE
             }
 
         }
+    }
+
+    fun getQuery(): String {
+        return binding.searchField.text.toString()
     }
 
     private fun setVisibilityDependingOnQueryCount(count: Int) {
