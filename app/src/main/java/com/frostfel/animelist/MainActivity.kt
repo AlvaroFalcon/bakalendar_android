@@ -7,7 +7,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
+import com.frostfel.animelist.databinding.ActivityMainBinding
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.pager.AnimeListPagerAdapter
 import com.frostfel.animelist.views.anime_detail.AnimeDetailFragment
 import com.frostfel.animelist.views.season_list.SeasonAnimeFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,9 +17,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), AnimeListNavigation {
     private val viewModel by viewModels<MainActivityViewModel>()
+    private lateinit var binding: ActivityMainBinding
+    private val adapter = AnimeListPagerAdapter(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+        binding.pager.adapter = adapter
         viewModel.initViewModel(this)
         navigateToAnimeListFragment()
     }
@@ -25,7 +32,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     override fun navigateToAnimeListFragment() {
         supportFragmentManager.commit {
             val fragment = SeasonAnimeFragment.newInstance(true)
-            replace(R.id.fragmentContainer, fragment)
+            //replace(R.id.fragmentContainer, fragment)
         }
     }
 
@@ -52,8 +59,8 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
                 R.anim.fade_in,
                 R.anim.slide_out
             )
-            add(R.id.fragmentContainer, fragment)
-            addToBackStack(AnimeDetailFragment::class.simpleName)
+            //add(R.id.fragmentContainer, fragment)
+            //addToBackStack(AnimeDetailFragment::class.simpleName)
         }
     }
 }
