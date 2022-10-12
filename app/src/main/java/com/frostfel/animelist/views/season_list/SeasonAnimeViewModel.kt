@@ -27,12 +27,9 @@ class SeasonAnimeViewModel @Inject constructor(
             .cachedIn(viewModelScope)
     }
 
-    fun onFavTap(anime: Anime, callback: () -> Unit) {
+    fun onFavTap(anime: Anime) {
         viewModelScope.launch {
             animeDbRepository.addOrRemove(anime)
-            if(isFav) {
-                callback()
-            }
         }
     }
 }

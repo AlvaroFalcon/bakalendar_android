@@ -26,9 +26,7 @@ open class SeasonAnimeFragment : Fragment() {
     private val adapter = AnimeListAdapter({ anime ->
         activityViewModel.navigator.navigateToAnimeDetail(anime)
     }, {
-        viewModel.onFavTap(it) {
-            setTextQuery(binding.searchView.getQuery())
-        }
+        viewModel.onFavTap(it)
     })
 
     companion object {
@@ -63,6 +61,9 @@ open class SeasonAnimeFragment : Fragment() {
         binding.recylcerView.adapter = adapter
         viewModel.favAnime.observe(viewLifecycleOwner) {
             adapter.updateFavs(it)
+            if(viewModel.isFav) {
+                setTextQuery(binding.searchView.getQuery())
+            }
         }
         setupSearchFlow(binding)
     }
