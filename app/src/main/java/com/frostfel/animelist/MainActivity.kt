@@ -12,6 +12,7 @@ import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.pager.AnimeListPagerAdapter
 import com.frostfel.animelist.views.anime_detail.AnimeDetailFragment
 import com.frostfel.animelist.views.season_list.SeasonAnimeFragment
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,12 +20,16 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     private val viewModel by viewModels<MainActivityViewModel>()
     private lateinit var binding: ActivityMainBinding
     private val adapter = AnimeListPagerAdapter(this)
+    private val TAB_TITLES = arrayOf("All", "Favorites")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         binding.pager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.pager) {tab, position ->
+            tab.text = TAB_TITLES[position]
+        }.attach()
         viewModel.initViewModel(this)
         navigateToAnimeListFragment()
     }
