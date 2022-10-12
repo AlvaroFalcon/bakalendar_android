@@ -20,15 +20,16 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     private val viewModel by viewModels<MainActivityViewModel>()
     private lateinit var binding: ActivityMainBinding
     private val adapter = AnimeListPagerAdapter(this)
-    private val TAB_TITLES = arrayOf("All", "Favorites")
+    private lateinit var tabTitles : Array<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        tabTitles = arrayOf(resources.getString(R.string.all_tab_title), resources.getString(R.string.favorites_tab_title))
         binding.pager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.pager) {tab, position ->
-            tab.text = TAB_TITLES[position]
+            tab.text = tabTitles[position]
         }.attach()
         viewModel.initViewModel(this)
         navigateToAnimeListFragment()
