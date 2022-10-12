@@ -15,9 +15,8 @@ import com.squareup.picasso.Picasso
 class AnimeListAdapter(
     private val onClickAnime: (anime: Anime) -> Unit,
     private val onClickFav: (anime: Anime) -> Unit,
-    private val isAnimeStarred: (anime: Anime) -> Boolean
 ) : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
-
+    val favList = mutableListOf<Anime>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             AnimeListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,6 +26,16 @@ class AnimeListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val anime = getItem(position)!!
         holder.bind(anime, onClickAnime, onClickFav, isAnimeStarred(anime))
+    }
+
+    private fun isAnimeStarred(anime: Anime): Boolean {
+        return favList.any{it.malId == anime.malId}
+    }
+
+    fun updateFavs(animeList: List<Anime>) {
+        favList.clear()
+        favList.addAll(animeList)
+        notifyDataSetChanged()
     }
 
     class ViewHolder(private val binding: AnimeListItemBinding) :

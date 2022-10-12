@@ -1,5 +1,7 @@
 package com.frostfel.animelist.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -16,4 +18,7 @@ interface AnimeDao {
 
     @Query("SELECT * FROM anime WHERE malId=:id ")
     suspend fun findAnimeById(id: Int): Anime?
+
+    @Query("SELECT * FROM anime")
+    fun getAll(): LiveData<List<Anime>>
 }

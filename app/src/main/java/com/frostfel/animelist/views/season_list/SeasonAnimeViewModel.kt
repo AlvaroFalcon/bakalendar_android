@@ -19,9 +19,10 @@ class SeasonAnimeViewModel @Inject constructor(
     private val animeDbRepository: AnimeDbRepository
 ) : ViewModel(), LifecycleObserver {
     val filterText : MutableLiveData<String> = MutableLiveData("")
+    val favAnime : LiveData<List<Anime>> = animeDbRepository.getAll()
     fun retrieveData(filter: String): Flow<PagingData<Anime>> {
         return animeRepository.getAnimeList().asFlow()
-            .map { it.filter { item -> item.title.contains(filter, ignoreCase = true) } }
+            .map { it.filter { item -> item.title?.contains(filter, ignoreCase = true) == true } }
             .cachedIn(viewModelScope)
     }
 

@@ -29,8 +29,6 @@ class SeasonAnimeFragment : Fragment() {
         activityViewModel.navigator.navigateToAnimeDetail(anime)
     }, {
         viewModel.onFavTap(it)
-    }, {
-        false
     })
 
     companion object {
@@ -50,6 +48,9 @@ class SeasonAnimeFragment : Fragment() {
     private fun initView(binding: SeasonAnimeFragmentBinding) {
         binding.recylcerView.layoutManager = LinearLayoutManager(activity)
         binding.recylcerView.adapter = adapter
+        viewModel.favAnime.observe(viewLifecycleOwner) {
+            adapter.updateFavs(it)
+        }
         setupSearchFlow(binding)
     }
 
