@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         setContentView(view)
         initView()
         viewModel.initViewModel(this)
-        navigateToAnimeListFragment()
     }
 
     private fun initView() {
@@ -42,13 +41,6 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
-    }
-
-    override fun navigateToAnimeListFragment() {
-        supportFragmentManager.commit {
-            val fragment = SeasonAnimeFragment.newInstance(true)
-            //replace(R.id.fragmentContainer, fragment)
-        }
     }
 
     override fun onResume() {
