@@ -15,6 +15,7 @@ class DataPreferenceStore {
         private const val ANIME_LIST_DATA_KEY = "ANIME_LIST_DATA_KEY"
         private const val LAST_UPDATED_KEY = "LAST_UPDATED_KEY"
         private const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
+        private const val IS_FIRST_TIME = "IS_FIRST_TIME"
         private val formatter = DateTimeFormatter.ofPattern(DATE_FORMAT)
         private val pattern = DateTimeFormatter.ofPattern(DATE_FORMAT)
 
@@ -28,6 +29,17 @@ class DataPreferenceStore {
                 putString(ANIME_LIST_DATA_KEY, listString)
                 putString(LAST_UPDATED_KEY, LocalDateTime.now().format(formatter))
                 apply()
+            }
+        }
+
+        fun isFirstTime(context: Context): Boolean {
+            return true
+            return context.getStore().getBoolean(IS_FIRST_TIME, true)
+        }
+
+        fun setFirstTime(context: Context) {
+            with(context.getStore().edit()) {
+                putBoolean(IS_FIRST_TIME, false)
             }
         }
 

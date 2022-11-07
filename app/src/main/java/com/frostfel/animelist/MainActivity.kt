@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         setContentView(view)
         initView()
         viewModel.initViewModel(this)
+        viewModel.initNotifications(this)
     }
 
     private fun initView() {

@@ -23,6 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.anime_detail.AnimeDetailActivity" />
+
+        <receiver android:name=".broadcast.AnimeAlertAlarm" />
     </application>
 
 </manifest>
