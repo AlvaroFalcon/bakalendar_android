@@ -33,7 +33,6 @@ class DataPreferenceStore {
         }
 
         fun isFirstTime(context: Context): Boolean {
-            return true
             return context.getStore().getBoolean(IS_FIRST_TIME, true)
         }
 

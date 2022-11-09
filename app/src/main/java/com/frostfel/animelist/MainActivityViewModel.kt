@@ -27,9 +27,7 @@ class MainActivityViewModel @Inject constructor(
             if (DataPreferenceStore.isFirstTime(it)) {
                 createNotificationChannel(it)
                 DataPreferenceStore.setFirstTime(context)
-                var alarmMgr: AlarmManager? = null
-
-                alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 var alarmIntent: PendingIntent =
                     Intent(context, AnimeAlertAlarm::class.java).let { intent ->
                         PendingIntent.getBroadcast(context, 0, intent, 0)
@@ -40,7 +38,7 @@ class MainActivityViewModel @Inject constructor(
                     set(Calendar.HOUR_OF_DAY, 10)
                 }
 
-                alarmMgr.setInexactRepeating(
+                alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     calendar.timeInMillis,
                     AlarmManager.INTERVAL_DAY,

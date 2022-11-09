@@ -19,4 +19,9 @@
     <string name="search_view_placeholder">Search something…</string>
     <string name="all_tab_title">All</string>
     <string name="favorites_tab_title">Favorites</string>
+    <plurals name="notification_text">
+        <item quantity="one">A new episode of %1$s is coming out today!</item>
+        <item quantity="other">New episodes of your favorite animes are coming out today!</item>
+    </plurals>
+    <string name="notification_title">Prepare yourself!</string>
 </resources>

@@ -81,3 +81,43 @@ fun Broadcast.getNextBroadcastString(context: Context): String {
         context.getString(R.string.two_values_airing, airingDaysLeft, airingHoursLeft)
     }
 }
+
+fun Broadcast.isAiringToday(): Boolean {
+    val day = DayOfWeek.from(this.day)
+    if (day == DayOfWeek.UNKNOWN) return false
+    val broadcastHour = this.time.split(":")[0].toInt()
+    val broadcastMinute = this.time.split(":")[1].toInt()
+    val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
+        .withZoneSameInstant(ZoneId.of(this.timeZone))
+    val zonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
+        .withZoneSameInstant(ZoneId.of(this.timeZone)).withHour(broadcastHour)
+        .withMinute(broadcastMinute).withSecond(0)
+    val nextBroadcastDate = when {
+        day.value > todayZoned.dayOfWeek.value -> {
+            // broadcast day after today
+            val broadcastDate =
+                zonedDateTime.plusDays((day.value - zonedDateTime.dayOfWeek.value).toLong())
+            broadcastDate
+        }
+        day.value == todayZoned.dayOfWeek.value -> {
+            // broadcast the same day
+            val broadcastDate = if (broadcastHour < todayZoned.hour) {
+                // this already happened
+                zonedDateTime.plusDays(7L)
+            } else {
+                // airing today
+                zonedDateTime
+            }
+            broadcastDate
+        }
+        else -> {
+            // broadcast already happened, must be next week
+            val daysForNextEpisode = 7 - (zonedDateTime.dayOfWeek.value - day.value)
+            val broadcastDate = zonedDateTime.plusDays(daysForNextEpisode.toLong())
+            broadcastDate
+        }
+    }
+    val daysLeftForNextEpisode = ChronoUnit.DAYS.between(todayZoned, nextBroadcastDate)
+    val hoursLeftForNewEpisode = ChronoUnit.HOURS.between(todayZoned, nextBroadcastDate) % 24
+    return daysLeftForNextEpisode == 0L && hoursLeftForNewEpisode < 14
+}

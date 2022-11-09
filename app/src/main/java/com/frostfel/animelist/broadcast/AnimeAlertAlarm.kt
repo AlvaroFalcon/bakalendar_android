@@ -11,6 +11,7 @@ import com.frostfel.animelist.MainActivity
 import com.frostfel.animelist.R
 import com.frostfel.animelist.data.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.isAiringToday
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,30 +21,44 @@ class AnimeAlertAlarm : BroadcastReceiver() {
     lateinit var animeDbRepository: AnimeDbRepository
     private var notificationManager: NotificationManagerCompat? = null
 
-    override fun onReceive(p0: Context?, p1: Intent?) {
+    override fun onReceive(context: Context?, p1: Intent?) {
         val favList: List<Anime> = animeDbRepository.getAllNoLive()
-        val tapResultIntent = Intent(p0, MainActivity::class.java)
+        var todayAiring = addTodayAiringAnimesFrom(favList)
+        val tapResultIntent = Intent(context, MainActivity::class.java)
         tapResultIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pendingIntent: PendingIntent =
-            getActivity(p0, 0, tapResultIntent, FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
-        if (favList.isEmpty()) return
-        val text = if (favList.size > 1) {
-            "Some of your favorite animes are coming out today!"
-        } else {
-            "${favList.first().title} is coming out today!"
-        }
+            getActivity(context, 0, tapResultIntent, FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
+        if (todayAiring.isEmpty()) return
 
-        val notification = p0?.let {
+        val notificationPluralString = context?.resources?.getQuantityString(
+            R.plurals.notification_text,
+            todayAiring.size,
+            todayAiring.first().title ?: ""
+        )
+
+        val notificationTitle = context?.resources?.getString(R.string.notification_title)
+
+        val notification = context?.let {
             NotificationCompat.Builder(it, "fav_anime")
-                .setContentTitle("Animes coming out today!")
-                .setContentText(text)
+                .setContentTitle(notificationTitle ?: "")
+                .setContentText(notificationPluralString)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .build()
         }
-        notificationManager = p0?.let { NotificationManagerCompat.from(it) }
+        notificationManager = context?.let { NotificationManagerCompat.from(context) }
         notificationManager?.notify(favList.first().malId, notification!!)
+    }
+
+    private fun addTodayAiringAnimesFrom(favList: List<Anime>): List<Anime> {
+        val list = arrayListOf<Anime>()
+        favList.forEach {
+            if (it.broadcast.isAiringToday()) {
+                list.add(it)
+            }
+        }
+        return list
     }
 }
