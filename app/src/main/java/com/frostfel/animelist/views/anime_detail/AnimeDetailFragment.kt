@@ -69,6 +69,7 @@ class AnimeDetailFragment : Fragment() {
             )
             adapter.setData(anime.genres)
             binding.genreContainer.adapter = adapter
+            header.favoriteButton.setOnClickListener { viewModel.onFavTap(anime) }
         }
     }
 

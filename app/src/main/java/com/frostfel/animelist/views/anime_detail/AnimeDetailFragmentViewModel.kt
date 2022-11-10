@@ -1,12 +1,10 @@
 package com.frostfel.animelist.views.anime_detail
 
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.frostfel.animelist.data.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,5 +17,11 @@ class AnimeDetailFragmentViewModel @Inject constructor(
 
     fun initFavAnime(malId: Int) {
         favAnime = animeDbRepository.getById(malId)
+    }
+
+    fun onFavTap(anime: Anime) {
+        viewModelScope.launch {
+            animeDbRepository.addOrRemove(anime)
+        }
     }
 }
