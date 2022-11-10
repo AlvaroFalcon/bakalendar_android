@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import com.frostfel.animelist.databinding.FragmentAnimeDetailBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.getNextBroadcastString
-import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
 import com.frostfel.animelist.views.season_list.adapter.GenreListAdapter
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso
@@ -25,6 +24,10 @@ class AnimeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            val anime : Anime? = it.getParcelable(ANIME_PARAM)
+            anime?.let {favAnime ->
+                viewModel.initFavAnime(favAnime.malId)
+            }
             viewModel.anime.postValue(it.getParcelable(ANIME_PARAM))
         }
     }
@@ -41,6 +44,16 @@ class AnimeDetailFragment : Fragment() {
     private fun observeData() {
         viewModel.anime.observe(viewLifecycleOwner) {
             setupView(it)
+        }
+
+        viewModel.favAnime.observe(viewLifecycleOwner) {
+            setupStar(it.size)
+        }
+    }
+
+    private fun setupStar(size: Int) {
+        with(binding) {
+            header.favoriteButton.setState(size > 0)
         }
     }
 

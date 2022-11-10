@@ -7,6 +7,7 @@ interface AnimeDbRepository {
     suspend fun addAnime(anime: Anime)
     suspend fun removeAnime(anime: Anime)
     suspend fun addOrRemove(anime: Anime)
+    fun getById(id: Int): LiveData<List<Anime>>
     fun getAll(): LiveData<List<Anime>>
     fun getAllNoLive(): List<Anime>
 }

@@ -23,6 +23,10 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
         }
     }
 
+    override fun getById(id: Int): LiveData<List<Anime>> {
+        return animeDao.findAnimeByIdLiveData(id)
+    }
+
     override fun getAll(): LiveData<List<Anime>> {
         return animeDao.getAll()
     }

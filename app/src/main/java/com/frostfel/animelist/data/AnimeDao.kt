@@ -21,6 +21,9 @@ interface AnimeDao {
     @Query("SELECT * FROM anime WHERE malId=:id ")
     suspend fun findAnimeById(id: Int): Anime?
 
+    @Query("SELECT * FROM anime WHERE malId=:id")
+    fun findAnimeByIdLiveData(id: Int): LiveData<List<Anime>>
+
     @Query("SELECT * FROM anime")
     fun getAll(): LiveData<List<Anime>>
 
