@@ -30,7 +30,7 @@ class MainActivityViewModel @Inject constructor(
                 var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 var alarmIntent: PendingIntent =
                     Intent(context, AnimeAlertAlarm::class.java).let { intent ->
-                        PendingIntent.getBroadcast(context, 0, intent, 0)
+                        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
                     }
 
                 val calendar: Calendar = Calendar.getInstance().apply {
