@@ -6,4 +6,5 @@ import com.frostfel.animelist.model.Anime
 
 interface AnimeRepository {
     fun getAnimeList(isFav: Boolean): LiveData<PagingData<Anime>>
+    suspend fun getAnimeById(id: Int): Anime
 }

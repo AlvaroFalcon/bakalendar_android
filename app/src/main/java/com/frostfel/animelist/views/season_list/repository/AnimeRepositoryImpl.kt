@@ -33,6 +33,10 @@ class AnimeRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun getAnimeById(id: Int): Anime {
+        return apiServices.getAnimeById(id).data
+    }
+
     companion object {
         const val PAGE_SIZE = 25
     }

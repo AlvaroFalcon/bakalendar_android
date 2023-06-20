@@ -24,7 +24,7 @@ class MainActivityViewModel @Inject constructor(
 
     fun initNotifications(context: Context?) {
         context?.let {
-            if (DataPreferenceStore.isFirstTime(it)) {
+            if (DataPreferenceStore.isFirstTime(it) || true) {
                 createNotificationChannel(it)
                 DataPreferenceStore.setFirstTime(context)
                 var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
