@@ -13,4 +13,5 @@
     <color name="tab_selected_color">#ffffff</color>
     <color name="main_background">#F0AE39</color>
     <color name="card_header_background">#54000000</color>
+    <color name="textInputLayoutHint">#6E6D6D</color>
 </resources>

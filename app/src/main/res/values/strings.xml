@@ -24,4 +24,5 @@
         <item quantity="other">New episodes of your favorite animes are coming out today!</item>
     </plurals>
     <string name="notification_title">Prepare yourself!</string>
+    <string name="anime_image_content_desc">Anime image</string>
 </resources>

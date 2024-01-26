@@ -10,7 +10,7 @@
         android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColorHint="@color/gray"
+        android:textColorHint="@color/textInputLayoutHint"
         android:hint="@string/search_view_placeholder"
         >
         <com.google.android.material.textfield.TextInputEditText
@@ -30,6 +30,7 @@
     <ImageView
         android:id="@+id/clearView"
         android:layout_width="32dp"
+        android:contentDescription="@string/anime_image_content_desc"
         android:layout_height="32dp"
         android:layout_marginEnd="14dp"
         android:scaleType="centerInside"
