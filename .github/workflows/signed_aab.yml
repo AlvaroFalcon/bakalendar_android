@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 
 jobs:
   build:
-
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
 
     steps:
