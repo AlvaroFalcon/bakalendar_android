@@ -47,10 +47,10 @@ class AnimeListAdapter(
             isStarred: Boolean
         ) {
             binding.header.headerTitleText.text =
-                anime.broadcast.getNextBroadcastString(binding.root.context)
+                anime.broadcast?.getNextBroadcastString(binding.root.context)
             binding.animeTitle.text = anime.title
             binding.description.text = anime.synopsis
-            Picasso.get().load(anime.images.webp.largeImageUrl).into(binding.image)
+            Picasso.get().load(anime.images?.webp?.largeImageUrl).into(binding.image)
             val adapter = GenreListAdapter()
             if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(
                 AnimeListItemDecorator()
