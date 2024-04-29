@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TrailerInfo(
-    @SerializedName("youtube_id") val youtubeId: String?,
-    @SerializedName("url") val url: String?,
-    @SerializedName("embed_url") val embedUrl: String?
+    @SerializedName("youtube_id") val youtubeId: String,
+    @SerializedName("url") val url: String,
+    @SerializedName("embed_url") val embedUrl: String
 ) : Parcelable

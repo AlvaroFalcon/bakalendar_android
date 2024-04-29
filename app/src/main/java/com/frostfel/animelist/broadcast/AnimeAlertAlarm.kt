@@ -64,7 +64,8 @@ class AnimeAlertAlarm : BroadcastReceiver() {
     private suspend fun addTodayAiringAnimesFrom(favList: List<Anime>): List<Anime> {
         val list = arrayListOf<Anime>()
         favList.forEach {
-            if (it.broadcast?.isAiringToday() == true) {
+            if (it.broadcast.isAiringToday()) {
+                //animeRepository.getAnimeById(it.malId)
                 list.add(it)
             }
         }
