@@ -11,15 +11,15 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 @Parcelize
 data class Broadcast(
-    @SerializedName("day") val day: String,
-    @SerializedName("time") val time: String,
-    @SerializedName("timezone") val timeZone: String,
-    @SerializedName("string") val stringValue: String,
+    @SerializedName("day") val day: String?,
+    @SerializedName("time") val time: String?,
+    @SerializedName("timezone") val timeZone: String?,
+    @SerializedName("string") val stringValue: String?,
 ) : Parcelable
 
 fun Broadcast.getNextBroadcastString(context: Context): String {
     val day = DayOfWeek.from(this.day)
-    if (day == DayOfWeek.UNKNOWN) return stringValue
+    if (day == DayOfWeek.UNKNOWN || time == null) return stringValue ?: ""
     val broadcastHour = this.time.split(":")[0].toInt()
     val broadcastMinute = this.time.split(":")[1].toInt()
     val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -84,7 +84,7 @@ fun Broadcast.getNextBroadcastString(context: Context): String {
 
 fun Broadcast.isAiringToday(): Boolean {
     val day = DayOfWeek.from(this.day)
-    if (day == DayOfWeek.UNKNOWN) return false
+    if (day == DayOfWeek.UNKNOWN || time == null) return false
     val broadcastHour = this.time.split(":")[0].toInt()
     val broadcastMinute = this.time.split(":")[1].toInt()
     val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
