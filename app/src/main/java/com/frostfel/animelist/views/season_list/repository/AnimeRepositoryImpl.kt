@@ -2,20 +2,25 @@ package com.frostfel.animelist.views.season_list.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
-import com.frostfel.animelist.data.AnimeDbRepository
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.ApiServices
+import com.frostfel.animelist.data.mediators.AnimeRemoteMediator
+import com.frostfel.animelist.data.repository.RemoteKeyRepository
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.views.season_list.paging.AnimePagingSource
 import javax.inject.Inject
 
 class AnimeRepositoryImpl @Inject constructor(
     private val apiServices: ApiServices,
-    private val animeDbRepository: AnimeDbRepository
+    private val animeDbRepository: AnimeDbRepository,
+    private val remoteKeyRepository: RemoteKeyRepository
 ) : AnimeRepository {
+    @OptIn(ExperimentalPagingApi::class)
     override fun getAnimeList(isFav: Boolean): LiveData<PagingData<Anime>> {
         return if (isFav) {
             return MutableLiveData(PagingData.from(animeDbRepository.getAllNoLive()))
@@ -26,8 +31,10 @@ class AnimeRepositoryImpl @Inject constructor(
                     enablePlaceholders = false,
                     initialLoadSize = 2
                 ),
+                remoteMediator =  AnimeRemoteMediator(animeDbRepository, remoteKeyRepository, apiServices),
                 pagingSourceFactory = { AnimePagingSource(apiServices) },
-                initialKey = 1
+                initialKey = 1,
+
             ).liveData
         }
 

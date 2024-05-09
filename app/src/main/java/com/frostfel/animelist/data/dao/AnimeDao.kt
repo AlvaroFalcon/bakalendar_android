@@ -1,4 +1,4 @@
-package com.frostfel.animelist.data
+package com.frostfel.animelist.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +8,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.frostfel.animelist.model.Anime
 
 @Dao
@@ -17,6 +18,9 @@ interface AnimeDao {
 
     @Delete
     suspend fun deleteAnime(anime: Anime)
+
+    @Update(entity = Anime::class)
+    fun update(anime: Anime)
 
     @Query("SELECT * FROM anime WHERE malId=:id ")
     suspend fun findAnimeById(id: Int): Anime?

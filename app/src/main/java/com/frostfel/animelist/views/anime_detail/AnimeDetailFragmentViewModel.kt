@@ -1,7 +1,7 @@
 package com.frostfel.animelist.views.anime_detail
 
 import androidx.lifecycle.*
-import com.frostfel.animelist.data.AnimeDbRepository
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

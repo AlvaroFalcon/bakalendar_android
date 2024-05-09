@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import com.frostfel.animelist.data.AnimeDbRepository
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

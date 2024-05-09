@@ -9,7 +9,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.frostfel.animelist.MainActivity
 import com.frostfel.animelist.R
-import com.frostfel.animelist.data.AnimeDbRepository
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.isAiringToday
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository

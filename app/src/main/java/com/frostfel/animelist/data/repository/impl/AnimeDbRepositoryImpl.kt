@@ -1,6 +1,8 @@
-package com.frostfel.animelist.data
+package com.frostfel.animelist.data.repository.impl
 
 import androidx.lifecycle.LiveData
+import com.frostfel.animelist.data.dao.AnimeDao
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.frostfel.animelist.data
+package com.frostfel.animelist.data.repository
 
 import androidx.lifecycle.LiveData
 import com.frostfel.animelist.model.Anime
