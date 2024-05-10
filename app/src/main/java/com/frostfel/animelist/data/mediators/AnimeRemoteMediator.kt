@@ -21,8 +21,6 @@ class AnimeRemoteMediator @Inject constructor(
     private val apiServices: ApiServices,
 ) : RemoteMediator<Int, Anime>() {
 
-    private val REMOTE_KEY_ID = "anime_remote_key"
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, Anime>
