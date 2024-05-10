@@ -84,18 +84,6 @@ class AnimeRemoteMediator @Inject constructor(
         }
     }
 
-/*    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Anime>): RemoteKey? {
-        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let { anime ->
-            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
-        }
-    }*/
-
-    /*private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Anime>): RemoteKey? {
-        return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { anime ->
-            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
-        }
-    }*/
-
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Anime>): RemoteKey? {
         return state.pages.lastOrNull {
             it.data.isNotEmpty()
