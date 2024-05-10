@@ -5,62 +5,105 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import androidx.room.withTransaction
 import com.frostfel.animelist.data.ApiServices
-import com.frostfel.animelist.data.repository.AnimeDbRepository
-import com.frostfel.animelist.data.repository.RemoteKeyRepository
+import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.RemoteKey
+import retrofit2.HttpException
+import java.io.IOException
+import java.util.Date
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class AnimeRemoteMediator @Inject constructor(
-    private val animeRepository: AnimeDbRepository,
-    private val remoteKeyRepository: RemoteKeyRepository,
+    private val appDatabase: AppDatabase,
     private val apiServices: ApiServices,
 ) : RemoteMediator<Int, Anime>() {
 
-    private val REMOTE_KEY_ID = "pokemon"
+    private val REMOTE_KEY_ID = "anime_remote_key"
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, Anime>,
+        state: PagingState<Int, Anime>
     ): MediatorResult {
         return try {
-            val currentPage = when (loadType) {
-                LoadType.REFRESH -> 0
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+            val page = when (loadType) {
+                LoadType.REFRESH -> {
+                    val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                    remoteKeys?.nextKey?.minus(1) ?: 1
+                }
+                LoadType.PREPEND -> {
+                    val remoteKeys = getRemoteKeyForFirstItem(state)
+                    val prevKey = remoteKeys?.prevKey
+                    prevKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                }
                 LoadType.APPEND -> {
-                    // RETRIEVE NEXT OFFSET FROM DATABASE
-                    val remoteKey = remoteKeyRepository.getById(REMOTE_KEY_ID)
-                    if (remoteKey.nextPage == 0) // END OF PAGINATION REACHED
-                        return MediatorResult.Success(endOfPaginationReached = true)
-                    remoteKey.nextPage
+                    val remoteKeys = getRemoteKeyForLastItem(state)
+                    val nextKey = remoteKeys?.nextKey
+                    nextKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 }
             }
-            // MAKE API CALL
-            val apiResponse = apiServices.getCurrentSeason(currentPage)
 
-            val results = apiResponse.data
-            val nextPage: Int = if (apiResponse.pagination.hasNextPage) currentPage + state.config.pageSize else 0
-            // SAVE RESULTS AND NEXT OFFSET TO DATABASE
+            val response = apiServices.getCurrentSeason(page)
+            val nextPage = if(response.pagination.hasNextPage) page.plus(1) else -1
+            val endOfPaginationReached = nextPage == -1
+            appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    // IF REFRESHING, CLEAR DATABASE FIRST
-                    //appDatabase.animeDao().deleteAll()
-                    remoteKeyRepository.deleteById(REMOTE_KEY_ID)
+                    appDatabase.remoteKeyDao().clearAll()
+                    appDatabase.animeDao().clearAll()
                 }
-                animeRepository.addAnime(
-                    results.first()
-                )
-                remoteKeyRepository.insert(
-                    RemoteKey(
-                        id = REMOTE_KEY_ID,
-                        nextPage = nextPage,
-                    )
-                )
-            // CHECK IF END OF PAGINATION REACHED
-            MediatorResult.Success(endOfPaginationReached = results.size < state.config.pageSize)
-        } catch (e: Exception) {
+                // Update RemoteKey for this query.
+                val prevKey = if(page > 1) page - 1 else null
+                val nextKey = if(endOfPaginationReached) null else page + 1
+                val remoteKeys = response.data.map {
+                    RemoteKey(id = it.malId.toString(), prevKey = prevKey,nextKey = nextKey, currentPage = page, animeId = it.malId)
+                }
+                appDatabase.remoteKeyDao().insertAll(remoteKeys)
+                appDatabase.animeDao().insertAll(response.data.map { it.copy(page = page)})
+            }
+
+            MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+        } catch (e: IOException) {
+            MediatorResult.Error(e)
+        } catch (e: HttpException) {
             MediatorResult.Error(e)
         }
     }
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, Anime>): RemoteKey? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.malId?.let { id ->
+                appDatabase.remoteKeyDao().getByAnimeId(id)
+            }
+        }
+    }
+
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Anime>): RemoteKey? {
+        return state.pages.firstOrNull {
+            it.data.isNotEmpty()
+        }?.data?.firstOrNull()?.let { anime ->
+            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
+        }
+    }
+
+/*    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Anime>): RemoteKey? {
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let { anime ->
+            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
+        }
+    }*/
+
+    /*private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Anime>): RemoteKey? {
+        return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { anime ->
+            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
+        }
+    }*/
+
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Anime>): RemoteKey? {
+        return state.pages.lastOrNull {
+            it.data.isNotEmpty()
+        }?.data?.lastOrNull()?.let { anime ->
+            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
+        }
+    }
+
 }

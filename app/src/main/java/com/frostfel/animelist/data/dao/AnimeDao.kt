@@ -1,8 +1,6 @@
 package com.frostfel.animelist.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
@@ -13,8 +11,14 @@ import com.frostfel.animelist.model.Anime
 
 @Dao
 interface AnimeDao {
+    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    suspend fun insertAll(animes: List<Anime> )
+
     @Insert
-    suspend fun insertAll(vararg animes: Anime)
+    suspend fun insert(anime: Anime)
+
+    @Query("DELETE FROM anime")
+    suspend fun clearAll()
 
     @Delete
     suspend fun deleteAnime(anime: Anime)
@@ -27,6 +31,9 @@ interface AnimeDao {
 
     @Query("SELECT * FROM anime WHERE malId=:id")
     fun findAnimeByIdLiveData(id: Int): LiveData<List<Anime>>
+
+    @Query("SELECT * FROM anime order by page")
+    fun pagingSource(): PagingSource<Int, Anime>
 
     @Query("SELECT * FROM anime")
     fun getAll(): LiveData<List<Anime>>

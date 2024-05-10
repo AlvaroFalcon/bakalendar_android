@@ -11,6 +11,7 @@ import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.ApiServices
 import com.frostfel.animelist.data.mediators.AnimeRemoteMediator
 import com.frostfel.animelist.data.repository.RemoteKeyRepository
+import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.views.season_list.paging.AnimePagingSource
 import javax.inject.Inject
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class AnimeRepositoryImpl @Inject constructor(
     private val apiServices: ApiServices,
     private val animeDbRepository: AnimeDbRepository,
-    private val remoteKeyRepository: RemoteKeyRepository
+    private val appDatabase: AppDatabase
 ) : AnimeRepository {
     @OptIn(ExperimentalPagingApi::class)
     override fun getAnimeList(isFav: Boolean): LiveData<PagingData<Anime>> {
@@ -29,11 +30,11 @@ class AnimeRepositoryImpl @Inject constructor(
                 config = PagingConfig(
                     pageSize = PAGE_SIZE,
                     enablePlaceholders = false,
-                    initialLoadSize = 2
+                    prefetchDistance = 10,
+                    initialLoadSize = PAGE_SIZE
                 ),
-                remoteMediator =  AnimeRemoteMediator(animeDbRepository, remoteKeyRepository, apiServices),
-                pagingSourceFactory = { AnimePagingSource(apiServices) },
-                initialKey = 1,
+                remoteMediator =  AnimeRemoteMediator(appDatabase,apiServices),
+                pagingSourceFactory = { animeDbRepository.pagingSource() },
 
             ).liveData
         }

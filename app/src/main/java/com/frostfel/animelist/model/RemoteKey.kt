@@ -5,6 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class RemoteKey(
-    @PrimaryKey val id: String,
-    val nextPage: Int,
+    @PrimaryKey(autoGenerate = false) val id: String,
+    val prevKey: Int?,
+    val nextKey: Int?,
+    val currentPage: Int,
+    val createdAt: Long = System.currentTimeMillis(),
+    val animeId: Int
 )
