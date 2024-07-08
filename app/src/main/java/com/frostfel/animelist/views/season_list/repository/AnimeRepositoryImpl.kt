@@ -10,10 +10,8 @@ import androidx.paging.liveData
 import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.ApiServices
 import com.frostfel.animelist.data.mediators.AnimeRemoteMediator
-import com.frostfel.animelist.data.repository.RemoteKeyRepository
 import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
-import com.frostfel.animelist.views.season_list.paging.AnimePagingSource
 import javax.inject.Inject
 
 class AnimeRepositoryImpl @Inject constructor(
@@ -29,7 +27,6 @@ class AnimeRepositoryImpl @Inject constructor(
             Pager(
                 config = PagingConfig(
                     pageSize = PAGE_SIZE,
-                    enablePlaceholders = false,
                     prefetchDistance = 10,
                     initialLoadSize = PAGE_SIZE
                 ),

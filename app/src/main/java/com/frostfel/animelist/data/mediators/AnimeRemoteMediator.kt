@@ -12,7 +12,6 @@ import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.RemoteKey
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.Date
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -20,6 +19,18 @@ class AnimeRemoteMediator @Inject constructor(
     private val appDatabase: AppDatabase,
     private val apiServices: ApiServices,
 ) : RemoteMediator<Int, Anime>() {
+
+    override suspend fun initialize(): InitializeAction {
+        val twelveHoursAgo = System.currentTimeMillis() - 12 * 60 * 60 * 1000
+        val lastRefreshTime = appDatabase.remoteKeyDao().getCreationTime() ?: 0L
+
+        return if (lastRefreshTime < twelveHoursAgo) {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        } else {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        }
+    }
+
 
     override suspend fun load(
         loadType: LoadType,

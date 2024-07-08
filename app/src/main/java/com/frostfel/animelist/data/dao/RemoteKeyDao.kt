@@ -16,7 +16,7 @@ interface RemoteKeyDao {
     @Query("SELECT * FROM remoteKey WHERE id = :id")
     suspend fun getById(id: String): RemoteKey?
     @Query("Select createdAt from remoteKey order by createdAt DESC LIMIT 1")
-    suspend fun getCreationTime(): Long?
+    fun getCreationTime(): Long?
 
     @Query("SELECT * FROM remoteKey where id = :animeId")
     suspend fun getByAnimeId(animeId: Int): RemoteKey?
