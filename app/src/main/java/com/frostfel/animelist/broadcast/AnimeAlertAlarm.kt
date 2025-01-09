@@ -29,8 +29,8 @@ class AnimeAlertAlarm : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, p1: Intent?) {
         CoroutineScope(Dispatchers.IO).launch {
-            val favList: List<Anime> = animeDbRepository.getAllNoLive()
-            var todayAiring = addTodayAiringAnimesFrom(favList)
+            val favList: List<Anime> = animeDbRepository.getAllFavNoLive()
+            val todayAiring = addTodayAiringAnimesFrom(favList)
             val tapResultIntent = Intent(context, MainActivity::class.java)
             tapResultIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             val pendingIntent: PendingIntent =

@@ -13,4 +13,7 @@ interface AnimeDbRepository {
     fun getAll(): LiveData<List<Anime>>
     fun pagingSource() : PagingSource<Int, Anime>
     fun getAllNoLive(): List<Anime>
+    fun getAllFav(): LiveData<List<Anime>>
+    fun getAllFavNoLive(): List<Anime>
+    fun setStarred(malId: Int, starred: Boolean)
 }

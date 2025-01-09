@@ -40,4 +40,13 @@ interface AnimeDao {
 
     @Query("SELECT * FROM anime")
     fun getAllNoLive(): List<Anime>
+
+    @Query("SELECT * FROM anime WHERE starred = 1")
+    fun getAllStarred(): LiveData<List<Anime>>
+
+    @Query("UPDATE anime SET starred = :starred WHERE malId = :malId")
+    fun setStarred(malId: Int, starred: Boolean)
+
+    @Query("SELECT * FROM anime WHERE starred = 1")
+    fun getAllFavNoLive(): List<Anime>
 }

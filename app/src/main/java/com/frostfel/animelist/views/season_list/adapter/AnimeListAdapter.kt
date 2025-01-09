@@ -16,7 +16,6 @@ class AnimeListAdapter(
     private val onClickAnime: (anime: Anime) -> Unit,
     private val onClickFav: (anime: Anime) -> Unit,
 ) : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
-    val favList = mutableListOf<Anime>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             AnimeListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,14 +28,9 @@ class AnimeListAdapter(
     }
 
     private fun isAnimeStarred(anime: Anime): Boolean {
-        return favList.any{it.malId == anime.malId}
+        return anime.starred
     }
 
-    fun updateFavs(animeList: List<Anime>) {
-        favList.clear()
-        favList.addAll(animeList)
-        notifyDataSetChanged()
-    }
 
     class ViewHolder(private val binding: AnimeListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

@@ -59,12 +59,6 @@ open class SeasonAnimeFragment : Fragment() {
     private fun initView(binding: SeasonAnimeFragmentBinding) {
         binding.recylcerView.layoutManager = LinearLayoutManager(activity)
         binding.recylcerView.adapter = adapter
-        viewModel.favAnime.observe(viewLifecycleOwner) {
-            adapter.updateFavs(it)
-            if(viewModel.isFav) {
-                setTextQuery(binding.searchView.getQuery())
-            }
-        }
         setupSearchFlow(binding)
     }
 

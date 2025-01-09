@@ -45,4 +45,16 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
     override fun getAllNoLive(): List<Anime> {
         return animeDao.getAllNoLive()
     }
+
+    override fun getAllFav(): LiveData<List<Anime>> {
+        return animeDao.getAllStarred()
+    }
+
+    override fun getAllFavNoLive(): List<Anime> {
+        return animeDao.getAllFavNoLive()
+    }
+
+    override fun setStarred(malId: Int, starred: Boolean) {
+        animeDao.setStarred(malId, starred)
+    }
 }
