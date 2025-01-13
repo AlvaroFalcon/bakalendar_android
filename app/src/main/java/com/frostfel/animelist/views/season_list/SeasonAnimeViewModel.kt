@@ -9,7 +9,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import com.frostfel.animelist.data.repository.AnimeDbRepository
-import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,10 +30,9 @@ class SeasonAnimeViewModel @Inject constructor(
             .cachedIn(viewModelScope)
     }
 
-    fun onFavTap(anime: Anime) {
+    fun onFavTap(item: AnimeWithPreferences) {
         viewModelScope.launch {
-            //TODO: fix this pls
-            animeDbRepository.setStarred(anime.malId, true)
+            animeDbRepository.setStarred(item.anime.malId, item.userPreferences?.starred?.not() ?: true)
         }
     }
 }

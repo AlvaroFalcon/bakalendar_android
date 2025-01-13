@@ -1,63 +1,66 @@
-package com.frostfel.animelist.views.season_list.adapter
+    package com.frostfel.animelist.views.season_list.adapter
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import com.frostfel.animelist.databinding.AnimeListItemBinding
-import com.frostfel.animelist.model.Anime
-import com.frostfel.animelist.model.AnimeWithPreferences
-import com.frostfel.animelist.model.getNextBroadcastString
-import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
-import com.squareup.picasso.Picasso
+    import android.view.LayoutInflater
+    import android.view.ViewGroup
+    import androidx.paging.PagingDataAdapter
+    import androidx.recyclerview.widget.DiffUtil
+    import androidx.recyclerview.widget.RecyclerView
+    import com.frostfel.animelist.databinding.AnimeListItemBinding
+    import com.frostfel.animelist.model.Anime
+    import com.frostfel.animelist.model.AnimeWithPreferences
+    import com.frostfel.animelist.model.getNextBroadcastString
+    import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
+    import com.squareup.picasso.Picasso
 
-class AnimeListAdapter(
-    private val onClickAnime: (anime: Anime) -> Unit,
-    private val onClickFav: (anime: Anime) -> Unit,
-) : PagingDataAdapter<AnimeWithPreferences, AnimeListAdapter.ViewHolder>(AnimeComparator) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            AnimeListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)!!
-        holder.bind(item.anime, onClickAnime, onClickFav, item.userPreferences?.starred ?: false)
-    }
-    class ViewHolder(private val binding: AnimeListItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(
-            anime: Anime,
-            onClickAnime: (anime: Anime) -> Unit,
-            onClickFav: (anime: Anime) -> Unit,
-            isStarred: Boolean
-        ) {
-            binding.header.headerTitleText.text =
-                anime.broadcast.getNextBroadcastString(binding.root.context)
-            binding.animeTitle.text = anime.title
-            binding.description.text = anime.synopsis
-            Picasso.get().load(anime.images.webp.largeImageUrl).into(binding.image)
-            val adapter = GenreListAdapter()
-            if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(
-                AnimeListItemDecorator()
-            )
-            adapter.setData(anime.genres)
-            binding.genreContainer.adapter = adapter
-            binding.header.favoriteButton.setState(isStarred)
-            binding.header.favoriteButton.setOnClickListener { onClickFav(anime) }
-            binding.root.setOnClickListener { onClickAnime(anime) }
-        }
-    }
-
-    object AnimeComparator : DiffUtil.ItemCallback<AnimeWithPreferences>() {
-        override fun areItemsTheSame(oldItem: AnimeWithPreferences, newItem: AnimeWithPreferences): Boolean {
-            return oldItem.anime.malId == newItem.anime.malId
+    class AnimeListAdapter(
+        private val onClickAnime: (anime: Anime) -> Unit,
+        private val onClickFav: (animeWithPreferences: AnimeWithPreferences) -> Unit,
+    ) : PagingDataAdapter<AnimeWithPreferences, AnimeListAdapter.ViewHolder>(AnimeComparator) {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding =
+                AnimeListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolder(binding)
         }
 
-        override fun areContentsTheSame(oldItem: AnimeWithPreferences, newItem: AnimeWithPreferences): Boolean {
-            return oldItem == newItem
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = getItem(position)!!
+            holder.bind(item, onClickAnime, onClickFav, item.userPreferences?.starred ?: false)
+        }
+        class ViewHolder(private val binding: AnimeListItemBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bind(
+                item: AnimeWithPreferences,
+                onClickAnime: (anime: Anime) -> Unit,
+                onClickFav: (item: AnimeWithPreferences) -> Unit,
+                isStarred: Boolean
+            ) {
+                with(item.anime) {
+
+                binding.header.headerTitleText.text =
+                    this.broadcast.getNextBroadcastString(binding.root.context)
+                binding.animeTitle.text = this.title
+                binding.description.text = this.synopsis
+                Picasso.get().load(this.images.webp.largeImageUrl).into(binding.image)
+                val adapter = GenreListAdapter()
+                if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(
+                    AnimeListItemDecorator()
+                )
+                adapter.setData(this.genres)
+                binding.genreContainer.adapter = adapter
+                binding.header.favoriteButton.setState(isStarred)
+                binding.header.favoriteButton.setOnClickListener { onClickFav(item) }
+                binding.root.setOnClickListener { onClickAnime(this) }
+                }
+            }
+        }
+
+        object AnimeComparator : DiffUtil.ItemCallback<AnimeWithPreferences>() {
+            override fun areItemsTheSame(oldItem: AnimeWithPreferences, newItem: AnimeWithPreferences): Boolean {
+                return oldItem.anime.malId == newItem.anime.malId
+            }
+
+            override fun areContentsTheSame(oldItem: AnimeWithPreferences, newItem: AnimeWithPreferences): Boolean {
+                return oldItem == newItem
+            }
         }
     }
-}
