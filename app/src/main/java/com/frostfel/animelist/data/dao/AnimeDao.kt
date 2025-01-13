@@ -8,6 +8,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimePreferences
 
 @Dao
 interface AnimeDao {
@@ -41,12 +42,29 @@ interface AnimeDao {
     @Query("SELECT * FROM anime")
     fun getAllNoLive(): List<Anime>
 
-    @Query("SELECT * FROM anime WHERE starred = 1")
-    fun getAllStarred(): LiveData<List<Anime>>
+    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    fun setStarred(animePreferences: AnimePreferences)
 
-    @Query("UPDATE anime SET starred = :starred WHERE malId = :malId")
-    fun setStarred(malId: Int, starred: Boolean)
+    @Query("DELETE FROM user_anime_preferences WHERE malId = :malId")
+    fun removeStarred(malId: Int)
 
-    @Query("SELECT * FROM anime WHERE starred = 1")
+        @Query("""
+        SELECT a.*
+        FROM anime a
+        INNER JOIN user_anime_preferences u 
+            ON a.malId = u.malId
+        WHERE u.starred = 1
+    """)
+
     fun getAllFavNoLive(): List<Anime>
+
+    @Query("""
+        SELECT a.*
+        FROM anime a
+        INNER JOIN user_anime_preferences u 
+            ON a.malId = u.malId
+        WHERE u.starred = 1
+    """)
+
+    fun getAllFav(): LiveData<List<Anime>>
 }

@@ -1,16 +1,15 @@
 package com.frostfel.animelist.views.season_list.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
-import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.ApiServices
 import com.frostfel.animelist.data.mediators.AnimeRemoteMediator
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
 import javax.inject.Inject

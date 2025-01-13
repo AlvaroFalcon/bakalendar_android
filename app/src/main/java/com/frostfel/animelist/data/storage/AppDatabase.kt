@@ -7,9 +7,10 @@ import com.frostfel.animelist.data.dao.AnimeDao
 import com.frostfel.animelist.data.dao.RemoteKeyDao
 import com.frostfel.animelist.data.typeconverters.DatabaseTypeConverters
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimePreferences
 import com.frostfel.animelist.model.RemoteKey
 
-@Database(entities = [Anime::class, RemoteKey::class], version = 2)
+@Database(entities = [Anime::class, RemoteKey::class, AnimePreferences::class], version = 2)
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun animeDao(): AnimeDao

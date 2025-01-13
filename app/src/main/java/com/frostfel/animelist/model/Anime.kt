@@ -45,7 +45,5 @@ data class Anime (
     @SerializedName("explicit_genres") val explicitGenres: List<GenericMalData>,
     @SerializedName("themes") val themes: List<GenericMalData>,
     @SerializedName("demographics") val demographics: List<GenericMalData>,
-    val starred: Boolean = false,
-    val starredAt: Long? = null,
     var page: Int = 0
 ) : Parcelable

@@ -1,6 +1,10 @@
 package com.frostfel.animelist.views.season_list
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
@@ -28,7 +32,7 @@ class SeasonAnimeViewModel @Inject constructor(
 
     fun onFavTap(anime: Anime) {
         viewModelScope.launch {
-            animeDbRepository.setStarred(anime.malId, !anime.starred)
+            animeDbRepository.setStarred(anime.malId, true)
         }
     }
 }

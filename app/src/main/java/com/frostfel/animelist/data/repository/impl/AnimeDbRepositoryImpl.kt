@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 import com.frostfel.animelist.data.dao.AnimeDao
 import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimePreferences
 import javax.inject.Inject
 
 class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) :
@@ -47,7 +48,7 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
     }
 
     override fun getAllFav(): LiveData<List<Anime>> {
-        return animeDao.getAllStarred()
+        return animeDao.getAllFav()
     }
 
     override fun getAllFavNoLive(): List<Anime> {
@@ -55,6 +56,10 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
     }
 
     override fun setStarred(malId: Int, starred: Boolean) {
-        animeDao.setStarred(malId, starred)
+        if(starred) {
+            animeDao.setStarred(AnimePreferences(malId, true, System.currentTimeMillis()))
+        } else {
+            animeDao.removeStarred(malId)
+        }
     }
 }
