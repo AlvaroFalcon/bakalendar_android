@@ -56,10 +56,25 @@ interface AnimeDao {
     fun removeStarred(malId: Int)
 
     @Transaction
-    @Query("SELECT * FROM anime")
+    @Query("""
+    SELECT * 
+    FROM anime
+    WHERE malId IN (
+        SELECT malId 
+        FROM user_anime_preferences 
+        WHERE starred = 1
+    )
+""")
     fun getAllFavNoLive(): List<AnimeWithPreferences>
-
     @Transaction
-    @Query("SELECT * FROM anime")
+    @Query("""
+    SELECT * 
+    FROM anime
+    WHERE malId IN (
+        SELECT malId 
+        FROM user_anime_preferences 
+        WHERE starred = 1
+    )
+""")
     fun getAllFav(): LiveData<List<AnimeWithPreferences>>
 }
