@@ -2,11 +2,9 @@ package com.frostfel.animelist.data.migrations
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import java.util.Date
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        // Create the new RemoteKey table
         database.execSQL("""
             CREATE TABLE IF NOT EXISTS RemoteKey (
                 id TEXT NOT NULL PRIMARY KEY,
@@ -18,12 +16,22 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
             )
         """.trimIndent())
 
-        // Add the new column to the existing anime table
         database.execSQL("ALTER TABLE anime ADD COLUMN page INTEGER NOT NULL DEFAULT 0")
-        database.execSQL("ALTER TABLE anime ADD COLUMN starredAt INTEGER DEFAULT NULL")
 
-        // Update the existing data in the anime table
-        database.execSQL("UPDATE anime SET starredAt = ${Date().time} WHERE starred = 0")
-        database.execSQL("UPDATE anime SET starred = 1 WHERE starred = 0")
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS user_anime_preferences (
+                malId INTEGER NOT NULL,
+                starred INTEGER NOT NULL,
+                starredAt INTEGER,
+                PRIMARY KEY(malId),
+                FOREIGN KEY(malId) REFERENCES anime(malId) ON DELETE NO ACTION
+            )
+        """.trimIndent())
+
+        database.execSQL("""
+            INSERT INTO user_anime_preferences (malId, starred, starredAt)
+            SELECT malId, 1, CAST((strftime('%s','now') * 1000) AS INTEGER)
+            FROM anime
+        """.trimIndent())
     }
 }
