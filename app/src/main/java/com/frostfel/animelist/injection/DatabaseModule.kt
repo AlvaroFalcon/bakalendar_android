@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.frostfel.animelist.data.dao.AnimeDao
 import com.frostfel.animelist.data.dao.RemoteKeyDao
+import com.frostfel.animelist.data.migrations.MIGRATION_1_2
 import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.repository.RemoteKeyRepository
 import com.frostfel.animelist.data.repository.impl.AnimeDbRepositoryImpl
@@ -49,6 +50,6 @@ class DatabaseModule {
             appContext,
             AppDatabase::class.java,
             "BakalendarDB"
-        ).allowMainThreadQueries().build()
+        ).allowMainThreadQueries().addMigrations(MIGRATION_1_2).build()
     }
 }
