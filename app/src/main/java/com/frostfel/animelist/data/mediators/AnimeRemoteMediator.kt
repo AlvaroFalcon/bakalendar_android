@@ -8,7 +8,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.frostfel.animelist.data.ApiServices
 import com.frostfel.animelist.data.storage.AppDatabase
-import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.model.RemoteKey
 import retrofit2.HttpException
 import java.io.IOException
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class AnimeRemoteMediator @Inject constructor(
     private val appDatabase: AppDatabase,
     private val apiServices: ApiServices,
-) : RemoteMediator<Int, Anime>() {
+) : RemoteMediator<Int, AnimeWithPreferences>() {
 
     override suspend fun initialize(): InitializeAction {
         val twelveHoursAgo = System.currentTimeMillis() - 12 * 60 * 60 * 1000
@@ -34,7 +34,7 @@ class AnimeRemoteMediator @Inject constructor(
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, Anime>
+        state: PagingState<Int, AnimeWithPreferences>
     ): MediatorResult {
         return try {
             val page = when (loadType) {
@@ -79,27 +79,27 @@ class AnimeRemoteMediator @Inject constructor(
             MediatorResult.Error(e)
         }
     }
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, Anime>): RemoteKey? {
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, AnimeWithPreferences>): RemoteKey? {
         return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.malId?.let { id ->
+            state.closestItemToPosition(position)?.anime?.malId?.let { id ->
                 appDatabase.remoteKeyDao().getByAnimeId(id)
             }
         }
     }
 
-    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Anime>): RemoteKey? {
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, AnimeWithPreferences>): RemoteKey? {
         return state.pages.firstOrNull {
             it.data.isNotEmpty()
-        }?.data?.firstOrNull()?.let { anime ->
-            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
+        }?.data?.firstOrNull()?.let { item ->
+            appDatabase.remoteKeyDao().getByAnimeId(item.anime.malId)
         }
     }
 
-    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Anime>): RemoteKey? {
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, AnimeWithPreferences>): RemoteKey? {
         return state.pages.lastOrNull {
             it.data.isNotEmpty()
-        }?.data?.lastOrNull()?.let { anime ->
-            appDatabase.remoteKeyDao().getByAnimeId(anime.malId)
+        }?.data?.lastOrNull()?.let { item ->
+            appDatabase.remoteKeyDao().getByAnimeId(item.anime.malId)
         }
     }
 

@@ -6,6 +6,7 @@ import com.frostfel.animelist.data.dao.AnimeDao
 import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.AnimePreferences
+import com.frostfel.animelist.model.AnimeWithPreferences
 import javax.inject.Inject
 
 class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) :
@@ -23,7 +24,7 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
     }
 
     override suspend fun addOrRemove(anime: Anime) {
-        val dbAnime: Anime? = animeDao.findAnimeById(anime.malId)
+        val dbAnime: Anime? = animeDao.findAnimeById(anime.malId)?.anime
         if(dbAnime != null) {
             removeAnime(anime)
         } else {
@@ -31,27 +32,27 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
         }
     }
 
-    override fun getById(id: Int): LiveData<List<Anime>> {
+    override fun getById(id: Int): LiveData<List<AnimeWithPreferences>> {
         return animeDao.findAnimeByIdLiveData(id)
     }
 
-    override fun getAll(): LiveData<List<Anime>> {
+    override fun getAll(): LiveData<List<AnimeWithPreferences>> {
         return animeDao.getAll()
     }
 
-    override fun pagingSource(): PagingSource<Int, Anime> {
+    override fun pagingSource(): PagingSource<Int, AnimeWithPreferences> {
         return animeDao.pagingSource()
     }
 
-    override fun getAllNoLive(): List<Anime> {
+    override fun getAllNoLive(): List<AnimeWithPreferences> {
         return animeDao.getAllNoLive()
     }
 
-    override fun getAllFav(): LiveData<List<Anime>> {
+    override fun getAllFav(): LiveData<List<AnimeWithPreferences>> {
         return animeDao.getAllFav()
     }
 
-    override fun getAllFavNoLive(): List<Anime> {
+    override fun getAllFavNoLive(): List<AnimeWithPreferences> {
         return animeDao.getAllFavNoLive()
     }
 

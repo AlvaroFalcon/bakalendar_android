@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.frostfel.animelist.databinding.AnimeListItemBinding
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.model.getNextBroadcastString
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.squareup.picasso.Picasso
@@ -14,7 +15,7 @@ import com.squareup.picasso.Picasso
 class AnimeListAdapter(
     private val onClickAnime: (anime: Anime) -> Unit,
     private val onClickFav: (anime: Anime) -> Unit,
-) : PagingDataAdapter<Anime, AnimeListAdapter.ViewHolder>(AnimeComparator) {
+) : PagingDataAdapter<AnimeWithPreferences, AnimeListAdapter.ViewHolder>(AnimeComparator) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             AnimeListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,15 +23,9 @@ class AnimeListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val anime = getItem(position)!!
-        holder.bind(anime, onClickAnime, onClickFav, isAnimeStarred(anime))
+        val item = getItem(position)!!
+        holder.bind(item.anime, onClickAnime, onClickFav, item.userPreferences?.starred ?: false)
     }
-
-    private fun isAnimeStarred(anime: Anime): Boolean {
-        return false
-    }
-
-
     class ViewHolder(private val binding: AnimeListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
@@ -56,12 +51,12 @@ class AnimeListAdapter(
         }
     }
 
-    object AnimeComparator : DiffUtil.ItemCallback<Anime>() {
-        override fun areItemsTheSame(oldItem: Anime, newItem: Anime): Boolean {
-            return oldItem.malId == newItem.malId
+    object AnimeComparator : DiffUtil.ItemCallback<AnimeWithPreferences>() {
+        override fun areItemsTheSame(oldItem: AnimeWithPreferences, newItem: AnimeWithPreferences): Boolean {
+            return oldItem.anime.malId == newItem.anime.malId
         }
 
-        override fun areContentsTheSame(oldItem: Anime, newItem: Anime): Boolean {
+        override fun areContentsTheSame(oldItem: AnimeWithPreferences, newItem: AnimeWithPreferences): Boolean {
             return oldItem == newItem
         }
     }

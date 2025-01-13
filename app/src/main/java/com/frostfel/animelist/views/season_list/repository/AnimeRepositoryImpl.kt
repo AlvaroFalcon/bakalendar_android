@@ -12,6 +12,7 @@ import com.frostfel.animelist.data.mediators.AnimeRemoteMediator
 import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimeWithPreferences
 import javax.inject.Inject
 
 class AnimeRepositoryImpl @Inject constructor(
@@ -20,7 +21,7 @@ class AnimeRepositoryImpl @Inject constructor(
     private val appDatabase: AppDatabase
 ) : AnimeRepository {
     @OptIn(ExperimentalPagingApi::class)
-    override fun getAnimeList(isFav: Boolean): LiveData<PagingData<Anime>> {
+    override fun getAnimeList(isFav: Boolean): LiveData<PagingData<AnimeWithPreferences>> {
         return if (isFav) {
             val favLiveData = animeDbRepository.getAllFav()
             Transformations.map(favLiveData) { list ->

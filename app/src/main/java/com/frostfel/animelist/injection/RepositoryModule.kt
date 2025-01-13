@@ -1,8 +1,7 @@
 package com.frostfel.animelist.injection
 
-import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.ApiServices
-import com.frostfel.animelist.data.repository.RemoteKeyRepository
+import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import com.frostfel.animelist.views.season_list.repository.AnimeRepositoryImpl
