@@ -24,7 +24,7 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 starred INTEGER NOT NULL DEFAULT 0,
                 starredAt INTEGER,
                 PRIMARY KEY(malId),
-                FOREIGN KEY(malId) REFERENCES Anime(malId) ON DELETE NO ACTION
+                FOREIGN KEY(malId) REFERENCES Anime(malId) ON DELETE CASCADE
             )
         """.trimIndent())
 
