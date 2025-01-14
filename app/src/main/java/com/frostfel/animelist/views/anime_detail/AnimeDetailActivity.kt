@@ -1,12 +1,12 @@
 package com.frostfel.animelist.views.anime_detail
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.frostfel.animelist.R
 import com.frostfel.animelist.databinding.ActivityAnimeDetailBinding
-import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimeWithPreferences
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,12 +22,12 @@ class AnimeDetailActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         val bundle = intent.extras
-        val anime = bundle?.getParcelable<Anime?>(ANIME_EXTRA)
-        startDetail(anime)
+        val item = bundle?.getParcelable<AnimeWithPreferences?>(ANIME_EXTRA)
+        startDetail(item)
     }
 
 
-    private fun startDetail(anime: Anime?) {
+    private fun startDetail(anime: AnimeWithPreferences?) {
         if(anime == null) {
             finish()
             return

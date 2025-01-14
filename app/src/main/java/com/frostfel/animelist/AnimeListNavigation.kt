@@ -1,7 +1,7 @@
 package com.frostfel.animelist
 
-import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimeWithPreferences
 
 interface AnimeListNavigation {
-    fun navigateToAnimeDetail(anime: Anime)
+    fun navigateToAnimeDetail(anime: AnimeWithPreferences)
 }

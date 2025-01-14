@@ -8,7 +8,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.frostfel.animelist.databinding.ActivityMainBinding
-import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.pager.AnimeListPagerAdapter
 import com.frostfel.animelist.views.anime_detail.AnimeDetailActivity
 import com.google.android.material.tabs.TabLayoutMediator
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         }
     }
 
-    override fun navigateToAnimeDetail(anime: Anime) {
+    override fun navigateToAnimeDetail(anime: AnimeWithPreferences) {
         val detailIntent = Intent(this, AnimeDetailActivity::class.java)
         val bundle = Bundle().apply { putParcelable(AnimeDetailActivity.ANIME_EXTRA, anime) }
         detailIntent.putExtras(bundle)
