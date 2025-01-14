@@ -26,11 +26,11 @@ class MainActivityViewModel @Inject constructor(
         context?.let {
             if (DataPreferenceStore.isFirstTime(it)) {
                 createNotificationChannel(it)
-                DataPreferenceStore.setFirstTime(context)
-                var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                var alarmIntent: PendingIntent =
-                    Intent(context, AnimeAlertAlarm::class.java).let { intent ->
-                        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+                DataPreferenceStore.setFirstTime(it)
+                val alarmManager = it.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val alarmIntent: PendingIntent =
+                    Intent(it, AnimeAlertAlarm::class.java).let { intent ->
+                        PendingIntent.getBroadcast(it, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
                     }
 
                 val calendar: Calendar = Calendar.getInstance().apply {

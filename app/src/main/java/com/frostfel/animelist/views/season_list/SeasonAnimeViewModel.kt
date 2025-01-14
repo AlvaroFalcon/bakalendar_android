@@ -1,11 +1,15 @@
 package com.frostfel.animelist.views.season_list
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import com.frostfel.animelist.data.AnimeDbRepository
-import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.data.repository.AnimeDbRepository
+import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -20,16 +24,15 @@ class SeasonAnimeViewModel @Inject constructor(
 ) : ViewModel(), LifecycleObserver {
     var isFav = false
     val filterText : MutableLiveData<String> = MutableLiveData("")
-    val favAnime : LiveData<List<Anime>> = animeDbRepository.getAll()
-    fun retrieveData(filter: String): Flow<PagingData<Anime>> {
+    fun retrieveData(filter: String): Flow<PagingData<AnimeWithPreferences>> {
         return animeRepository.getAnimeList(isFav).asFlow()
-            .map { it.filter { item -> item.title?.contains(filter, ignoreCase = true) == true } }
+            .map { it.filter { item -> item.anime.title?.contains(filter, ignoreCase = true) == true } }
             .cachedIn(viewModelScope)
     }
 
-    fun onFavTap(anime: Anime) {
+    fun onFavTap(item: AnimeWithPreferences) {
         viewModelScope.launch {
-            animeDbRepository.addOrRemove(anime)
+            animeDbRepository.setStarred(item.anime.malId, item.userPreferences?.starred?.not() ?: true)
         }
     }
 }

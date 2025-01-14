@@ -45,5 +45,7 @@ data class Anime (
     @SerializedName("explicit_genres") val explicitGenres: List<GenericMalData>,
     @SerializedName("themes") val themes: List<GenericMalData>,
     @SerializedName("demographics") val demographics: List<GenericMalData>,
-    val starred: Boolean = false
+    @Deprecated("use from AnimeWithPreferences")
+    val starred: Boolean = false,
+    var page: Int = 0
 ) : Parcelable
