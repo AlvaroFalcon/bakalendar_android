@@ -1,9 +1,9 @@
 package com.frostfel.animelist.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
 
 @Entity(
     tableName = "user_anime_preferences",
@@ -18,7 +18,8 @@ import com.google.gson.annotations.SerializedName
 )
 data class AnimePreferences(
     @PrimaryKey(autoGenerate = false)
-    @SerializedName ("mal_id") val malId: Int,
+    val malId: Int,
+    @ColumnInfo(defaultValue = "0")
     val starred: Boolean = false,
     val starredAt: Long? = null,
 )

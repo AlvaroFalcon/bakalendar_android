@@ -16,15 +16,15 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
             )
         """.trimIndent())
 
-        database.execSQL("ALTER TABLE anime ADD COLUMN page INTEGER NOT NULL DEFAULT 0")
+        database.execSQL("ALTER TABLE Anime ADD COLUMN page INTEGER NOT NULL DEFAULT 0")
 
         database.execSQL("""
             CREATE TABLE IF NOT EXISTS user_anime_preferences (
                 malId INTEGER NOT NULL,
-                starred INTEGER NOT NULL,
+                starred INTEGER NOT NULL DEFAULT 0,
                 starredAt INTEGER,
                 PRIMARY KEY(malId),
-                FOREIGN KEY(malId) REFERENCES anime(malId) ON DELETE NO ACTION
+                FOREIGN KEY(malId) REFERENCES Anime(malId) ON DELETE NO ACTION
             )
         """.trimIndent())
 
