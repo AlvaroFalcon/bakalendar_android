@@ -7,13 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.commit
 import com.frostfel.animelist.databinding.ActivityMainBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.pager.AnimeListPagerAdapter
 import com.frostfel.animelist.views.anime_detail.AnimeDetailActivity
-import com.frostfel.animelist.views.anime_detail.AnimeDetailFragment
-import com.frostfel.animelist.views.season_list.SeasonAnimeFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
