@@ -34,6 +34,10 @@ interface AnimeDao {
     suspend fun findAnimeById(id: Int): AnimeWithPreferences?
 
     @Transaction
+    @Query("SELECT * FROM anime WHERE malId = :id")
+    fun findAnimeWithPreferencesByIdLiveData(id: Int): LiveData<AnimeWithPreferences?>
+
+    @Transaction
     @Query("SELECT * FROM anime WHERE malId=:id")
     fun findAnimeByIdLiveData(id: Int): LiveData<List<AnimeWithPreferences>>
 
