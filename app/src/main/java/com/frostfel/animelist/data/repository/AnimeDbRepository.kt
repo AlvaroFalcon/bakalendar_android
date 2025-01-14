@@ -17,4 +17,5 @@ interface AnimeDbRepository {
     fun getAllFav(): LiveData<List<AnimeWithPreferences>>
     fun getAllFavNoLive(): List<AnimeWithPreferences>
     fun setStarred(malId: Int, starred: Boolean)
+    fun findAnimeWithPreferencesByIdLiveData(id: Int): LiveData<AnimeWithPreferences?>
 }
