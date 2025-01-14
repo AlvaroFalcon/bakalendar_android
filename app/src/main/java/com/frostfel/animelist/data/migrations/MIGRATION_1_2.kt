@@ -23,7 +23,7 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 malId INTEGER NOT NULL,
                 starred INTEGER NOT NULL DEFAULT 0,
                 starredAt INTEGER,
-                PRIMARY KEY(malId),
+                PRIMARY KEY(malId)
             )
         """.trimIndent())
 
