@@ -23,6 +23,7 @@
         style="@style/AppTabLayout"
         app:tabTextColor="@color/tab_unselected_color"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="25dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
