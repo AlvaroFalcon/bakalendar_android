@@ -1,13 +1,13 @@
 package com.frostfel.animelist.views.anime_detail
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.frostfel.animelist.databinding.FragmentAnimeDetailBinding
-import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.getNextBroadcastString
 import com.frostfel.animelist.views.season_list.adapter.GenreListAdapter
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
@@ -24,7 +24,11 @@ class AnimeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            viewModel.setAnimeId(it.getParcelable<AnimeWithPreferences>(ANIME_PARAM)?.anime?.malId ?: 0)
+            val anime : Anime? = it.getParcelable(ANIME_PARAM)
+            anime?.let {favAnime ->
+                viewModel.initFavAnime(favAnime.malId)
+            }
+            viewModel.anime.postValue(it.getParcelable(ANIME_PARAM))
         }
     }
 
@@ -39,30 +43,38 @@ class AnimeDetailFragment : Fragment() {
 
     private fun observeData() {
         viewModel.anime.observe(viewLifecycleOwner) {
-            it ?: return@observe
             setupView(it)
+        }
+
+        viewModel.favAnime.observe(viewLifecycleOwner) {
+            setupStar(it.size)
         }
     }
 
-    private fun setupView(item: AnimeWithPreferences) {
+    private fun setupStar(size: Int) {
         with(binding) {
-            Picasso.get().load(item.anime.images.webp.largeImageUrl).into(image)
-            context?.let { header.headerTitleText.text = item.anime.broadcast.getNextBroadcastString(it) }
-            animeTitle.text = item.anime.title
-            description.text = item.anime.synopsis
+            header.favoriteButton.setState(size > 0)
+        }
+    }
+
+    private fun setupView(anime: Anime) {
+        with(binding) {
+            Picasso.get().load(anime.images.webp.largeImageUrl).into(image)
+            context?.let { header.headerTitleText.text = anime.broadcast.getNextBroadcastString(it) }
+            animeTitle.text = anime.title
+            description.text = anime.synopsis
             val adapter = GenreListAdapter()
             if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(
                 AnimeListItemDecorator()
             )
-            adapter.setData(item.anime.genres)
+            adapter.setData(anime.genres)
             binding.genreContainer.adapter = adapter
-            header.favoriteButton.setState(item.userPreferences?.starred ?: false)
-            header.favoriteButton.setOnClickListener { viewModel.onFavTap(item) }
+            header.favoriteButton.setOnClickListener { viewModel.onFavTap(anime) }
         }
     }
 
     companion object {
-        fun newInstance(anime: AnimeWithPreferences?) =
+        fun newInstance(anime: Anime) =
             AnimeDetailFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ANIME_PARAM, anime)

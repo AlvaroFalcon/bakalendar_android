@@ -63,8 +63,4 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
             animeDao.removeStarred(malId)
         }
     }
-
-    override fun findAnimeWithPreferencesByIdLiveData(id: Int): LiveData<AnimeWithPreferences?> {
-        return animeDao.findAnimeWithPreferencesByIdLiveData(id);
-    }
 }
