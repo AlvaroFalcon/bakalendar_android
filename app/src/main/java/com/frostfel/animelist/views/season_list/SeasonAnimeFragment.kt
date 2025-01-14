@@ -15,7 +15,11 @@ import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
 import com.frostfel.animelist.utils.getQueryFlow
 import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -23,8 +27,8 @@ open class SeasonAnimeFragment : Fragment() {
     private val viewModel by viewModels<SeasonAnimeViewModel>()
     private val activityViewModel by activityViewModels<MainActivityViewModel>()
     private lateinit var binding: SeasonAnimeFragmentBinding
-    private val adapter = AnimeListAdapter({ anime ->
-        activityViewModel.navigator.navigateToAnimeDetail(anime)
+    private val adapter = AnimeListAdapter({ item ->
+        activityViewModel.navigator.navigateToAnimeDetail(item)
     }, {
         viewModel.onFavTap(it)
     })

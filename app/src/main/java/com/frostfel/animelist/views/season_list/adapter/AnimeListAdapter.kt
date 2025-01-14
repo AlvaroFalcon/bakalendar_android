@@ -6,14 +6,13 @@
     import androidx.recyclerview.widget.DiffUtil
     import androidx.recyclerview.widget.RecyclerView
     import com.frostfel.animelist.databinding.AnimeListItemBinding
-    import com.frostfel.animelist.model.Anime
     import com.frostfel.animelist.model.AnimeWithPreferences
     import com.frostfel.animelist.model.getNextBroadcastString
     import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
     import com.squareup.picasso.Picasso
 
     class AnimeListAdapter(
-        private val onClickAnime: (anime: Anime) -> Unit,
+        private val onClickAnime: (anime: AnimeWithPreferences) -> Unit,
         private val onClickFav: (animeWithPreferences: AnimeWithPreferences) -> Unit,
     ) : PagingDataAdapter<AnimeWithPreferences, AnimeListAdapter.ViewHolder>(AnimeComparator) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,7 +29,7 @@
             RecyclerView.ViewHolder(binding.root) {
             fun bind(
                 item: AnimeWithPreferences,
-                onClickAnime: (anime: Anime) -> Unit,
+                onClickAnime: (anime: AnimeWithPreferences) -> Unit,
                 onClickFav: (item: AnimeWithPreferences) -> Unit,
                 isStarred: Boolean
             ) {
@@ -49,7 +48,7 @@
                 binding.genreContainer.adapter = adapter
                 binding.header.favoriteButton.setState(isStarred)
                 binding.header.favoriteButton.setOnClickListener { onClickFav(item) }
-                binding.root.setOnClickListener { onClickAnime(this) }
+                binding.root.setOnClickListener { onClickAnime(item) }
                 }
             }
         }
