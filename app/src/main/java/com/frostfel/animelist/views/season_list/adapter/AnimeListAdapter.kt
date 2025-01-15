@@ -22,7 +22,7 @@
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = getItem(position)!!
+            val item = getItem(position) ?: return
             holder.bind(item, onClickAnime, onClickFav, item.userPreferences?.starred ?: false)
         }
         class ViewHolder(private val binding: AnimeListItemBinding) :
