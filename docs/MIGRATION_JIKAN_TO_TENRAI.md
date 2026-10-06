@@ -13,9 +13,9 @@ de modo que la migración consiste principalmente en cambiar la URL base.
 | URL base | `https://api.jikan.moe/v4/` | `https://api.tenrai.org/v1/` |
 | Temporada actual | `GET seasons/now?page=N` | `GET seasons/now?page=N` |
 | Detalle | `GET anime/{id}` | `GET anime/{id}` |
-| Rate limit público | 3 req/s, 60 req/min | 3 req/s, 60 req/min, 40.000 req/día (por IP) |
+| Rate limit público | 3 req/s, 60 req/min | 4 req/s, 120 req/min, 40.000 req/día (por IP) |
 | Exceso de límite | HTTP 429 | HTTP 429 + cabecera `Retry-After` |
-| Clave opcional | — | `X-Server-Key` (300/min, 5/s; pensada para servidores) |
+| Clave opcional | — | `X-Server-Key` (300/min, 5/s; **no usable en apps móviles** según la doc) |
 | Docs | jikan.moe | https://api.tenrai.org/documentation · https://api.tenrai.org/llms.txt |
 
 Endpoints que Tenrai **no** soporta: users, clubs, watch, forum topics, user updates.
@@ -53,33 +53,31 @@ Los campos nuevos se ignoran con Gson, así que **no hace falta tocar modelos ni
 
 ## 3. Plan por fases
 
-### Fase 0 — Validación manual (antes de tocar código)
-- [ ] `curl 'https://api.tenrai.org/v1/seasons/now?page=1'` y `curl 'https://api.tenrai.org/v1/anime/52991'`
-      y comparar con una respuesta guardada de Jikan.
-- [ ] Confirmar valores de `broadcast.day` (la app espera `"Mondays"`, `"Tuesdays"`… en `DayOfWeek.from`)
-      y `broadcast.timezone` (`"Asia/Tokyo"`, usado con `ZoneId.of`).
-- [ ] Confirmar tamaño de página de `seasons/now` (app asume `PAGE_SIZE = 25`).
-- [ ] Confirmar qué campos pueden venir `null` (`episodes`, `score`, `rank`, `broadcast`, `trailer`…).
+### Fase 0 — Validación con la API real ✅
+Hecha contra `api.tenrai.org` el 06‑10‑2026 (las 5 páginas de `seasons/now`, 120 animes, y `anime/{id}`):
+- [x] Mismo formato que Jikan: `{data, pagination}` y `{data}`; 404 devuelve JSON de error.
+- [x] `broadcast.day` = `"Fridays"`, `"Sundays"`…; `broadcast.timezone` = `"Asia/Tokyo"` o `null`.
+- [x] 25 elementos por página, `has_next_page` correcto, sin duplicados.
+- [x] Nulos observados: `episodes`, `score`, `rank` (Gson deja 0 en primitivos), `synopsis`,
+      `title_english`, `season`, `year`, todo `broadcast.*` (49/120) y `aired.from` (2/120).
+      Las listas y objetos anidados nunca son `null` (la doc garantiza estructuras vacías).
+- [x] Conclusión: **no hace falta cambiar el esquema de Room ni migrar la BD**; solo hay que
+      cubrir `aired.from` y un `broadcast` con día pero sin zona horaria.
 
-### Fase 1 — Cambio mínimo (el "drop-in")
-- [ ] `ApiModule.kt`: `BASE_URL = "https://api.tenrai.org/v1/"`.
-- [ ] Mover la URL base a `buildConfigField` en `app/build.gradle` para poder cambiarla
-      sin tocar código (y por si hiciese falta un fallback).
+### Fase 1 — Cambio mínimo (el "drop-in") ✅
+- [x] URL base en `buildConfigField "API_BASE_URL"` (`https://api.tenrai.org/v1/`).
 - [ ] Comprobar en dispositivo: lista de temporada, scroll infinito, detalle, favoritos, notificación diaria.
 
-### Fase 2 — Robustez (recomendado, mismo PR o siguiente)
-- [ ] **Rate limit**: interceptor de OkHttp que, ante 429, espere `Retry-After` y reintente una vez.
-      El `RemoteMediator` hace ráfagas de páginas al hacer scroll rápido.
-- [ ] **Nulabilidad**: `Anime` declara no-nulos `episodes: Int`, `score: Double`, `rank: Int`,
-      `broadcast`, `trailer`, `aired`, `images`… Gson los rellena con `null` saltándose Kotlin y
-      puede provocar NPE (riesgo ya existente con Jikan, pero conviene cerrarlo ahora que
-      cambia el proveedor). Hacerlos nullables y ajustar los usos (`Broadcast.isAiringToday`,
-      `getNextBroadcastString`, adapters, `DatabaseTypeConverters`).
-- [ ] `HttpLoggingInterceptor.Level.BODY` solo en `debug` (hoy se loguea todo también en release).
-- [ ] Cabecera `User-Agent` identificando la app (buena práctica con APIs comunitarias).
+### Fase 2 — Robustez ✅
+- [x] `RateLimitRetryInterceptor`: ante 429 espera `Retry-After` (máx. 10 s, 1 s por defecto) y reintenta una vez.
+- [x] `Aired.from` nullable; `Broadcast` usa `Asia/Tokyo` si `timezone` es `null`.
+- [x] `HttpLoggingInterceptor.Level.BODY` solo en `debug`.
+- [x] Cabecera `User-Agent: Bakalendar-Android/<versión>`.
+- [x] Tests unitarios: deserialización de una respuesta real de Tenrai (`tenrai_seasons_now.json`)
+      y el interceptor con MockWebServer.
 
 ### Fase 3 — Opcional
-- [ ] `X-Server-Key`: **no** embeberla en el APK (es extraíble). Solo tendría sentido con un backend propio.
+- [ ] `X-Server-Key`: descartada. La doc dice explícitamente que no sirve para apps cliente (el límite es por clave, no por IP).
 - [ ] Valorar `GET schedules` como alternativa para "qué se emite hoy" en `AnimeAlertAlarm`.
 - [ ] Eliminar `AnimePagingSource` si sigue sin usarse.
 - [ ] Bump de versión (`versionCode`/`versionName`) y nota de release.
@@ -91,7 +89,8 @@ Los campos nuevos se ignoran con Gson, así que **no hace falta tocar modelos ni
 
 | Riesgo | Mitigación |
 |---|---|
-| Diferencias sutiles de formato (p. ej. `broadcast.day`) | Fase 0 + test unitario de deserialización con un JSON real de Tenrai |
+| Diferencias sutiles de formato | Verificado en fase 0 + test con JSON real de Tenrai |
+| API en beta, con caídas posibles | URL configurable; caché local de Room |
 | 429 por ráfagas de paginación | Interceptor con `Retry-After` |
 | Usuarios con versiones antiguas seguirán llamando a Jikan | Publicar cuanto antes; la caché local de Room (12 h) da algo de margen pero no evita el fallo |
 | Tenrai es otro proyecto comunitario sin SLA | URL base configurable; endpoint de estado `https://tenrai.org/status/api/status` |

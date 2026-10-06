@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Aired(
-    @SerializedName("from") val from: String,
+    @SerializedName("from") val from: String?,
     @SerializedName("to") val to: String?,
     @SerializedName("prop") val prop: AiredProp?
 ) : Parcelable
