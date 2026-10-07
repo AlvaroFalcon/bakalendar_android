@@ -30,7 +30,7 @@ class SeasonRefresher @Inject constructor(
 
     /** Throws (IOException, HttpException…) if the season could not be downloaded. */
     suspend fun refreshSeason() {
-        val season = fetchWholeSeason()
+        val season = newThisSeasonFirst(fetchWholeSeason())
         val seasonIds = season.map { it.malId }
         appDatabase.withTransaction {
             animeDao.deleteOutsideSeasonExceptFavourites(seasonIds)
@@ -56,6 +56,17 @@ class SeasonRefresher @Inject constructor(
                 Timber.w(e, "Could not refresh favourite ${favourite.malId}")
             }
         }
+    }
+
+    /**
+     * The API sorts by popularity, which puts long-running shows (One Piece, Conan…) on top.
+     * Keep its order but list the season's new shows before the continuing ones.
+     */
+    internal fun newThisSeasonFirst(season: List<Anime>): List<Anime> {
+        val current = season.groupingBy { it.season to it.year }.eachCount().maxByOrNull { it.value }?.key
+            ?: return season
+        val (new, continuing) = season.partition { (it.season to it.year) == current }
+        return new + continuing
     }
 
     private suspend fun fetchWholeSeason(): List<Anime> {

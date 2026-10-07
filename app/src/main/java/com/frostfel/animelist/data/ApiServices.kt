@@ -10,7 +10,9 @@ interface ApiServices {
     @GET("seasons/now")
     suspend fun getCurrentSeason(
         @Query("page") page: Int,
-        @Query("limit") limit: Int = 25
+        @Query("limit") limit: Int = 25,
+        // Also returns series that started in a previous season and are still airing.
+        @Query("continuing") continuing: Boolean = true
     ): SeasonResponse
 
     @GET("anime/{id}")

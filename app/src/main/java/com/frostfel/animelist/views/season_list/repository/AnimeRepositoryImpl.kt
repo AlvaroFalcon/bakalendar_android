@@ -8,7 +8,9 @@ import com.frostfel.animelist.data.mediators.SeasonRemoteMediator
 import com.frostfel.animelist.data.repository.AnimeDbRepository
 import com.frostfel.animelist.data.season.SeasonRefresher
 import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.model.genresByPopularity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -28,6 +30,15 @@ class AnimeRepositoryImpl @Inject constructor(
                 pagingSourceFactory = { animeDbRepository.seasonPagingSource() },
             ).flow
         }
+    }
+
+    override fun getGenres(isFav: Boolean): Flow<List<String>> {
+        val animes = if (isFav) {
+            animeDbRepository.getAllFavFlow().map { list -> list.map { it.anime } }
+        } else {
+            animeDbRepository.seasonFlow()
+        }
+        return animes.map { it.genresByPopularity() }.distinctUntilChanged()
     }
 
     companion object {

@@ -19,9 +19,11 @@ import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
 import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.utils.getQueryFlow
 import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -76,6 +78,11 @@ open class SeasonAnimeFragment : Fragment() {
 
         val scope = viewLifecycleOwner.lifecycleScope
         scope.launch { observeSearch(binding) }
+        scope.launch {
+            combine(viewModel.genres, viewModel.selectedGenre, ::Pair).collect { (genres, selected) ->
+                renderGenres(binding, genres, selected)
+            }
+        }
         scope.launch { viewModel.animeList.collectLatest { adapter.submitData(it) } }
         scope.launch {
             adapter.loadStateFlow.collect {
@@ -96,6 +103,27 @@ open class SeasonAnimeFragment : Fragment() {
             .collect { viewModel.setQuery(it) }
     }
 
+    private fun renderGenres(binding: SeasonAnimeFragmentBinding, genres: List<String>, selected: String?) {
+        // Keep the selected genre visible even if it is no longer in the list.
+        val names = if (selected != null && selected !in genres) listOf(selected) + genres else genres
+        binding.genreFilterScroll.isVisible = names.isNotEmpty()
+        val group = binding.genreFilter
+        val current = (0 until group.childCount).map { (group.getChildAt(it) as Chip).text.toString() }
+        if (current != names) {
+            group.removeAllViews()
+            names.forEach { name ->
+                val chip = layoutInflater.inflate(R.layout.genre_filter_chip, group, false) as Chip
+                chip.text = name
+                chip.setOnClickListener { viewModel.onGenreTap(name) }
+                group.addView(chip)
+            }
+        }
+        (0 until group.childCount).forEach {
+            val chip = group.getChildAt(it) as Chip
+            chip.isChecked = chip.text == selected
+        }
+    }
+
     private fun render() {
         val binding = binding ?: return
         val loadStates = loadStates ?: return
@@ -111,7 +139,7 @@ open class SeasonAnimeFragment : Fragment() {
         val message = when {
             !isEmpty || isRemoteLoading || isLocalLoading -> null
             remoteError != null -> R.string.season_load_error
-            binding.searchView.getQuery().isNotBlank() -> R.string.search_no_results
+            viewModel.hasActiveFilter -> R.string.search_no_results
             viewModel.isFav -> R.string.favorites_empty
             else -> null
         }

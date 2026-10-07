@@ -61,6 +61,21 @@ class SeasonRefresherTest {
     }
 
     @Test
+    fun continuingSeriesGoAfterTheNewOnes() = runTest {
+        api.season = listOf(
+            Fixtures.anime(1, "One Piece", season = "fall", year = "1999"),
+            Fixtures.anime(2, season = "fall", year = "2026"),
+            Fixtures.anime(3, "Conan", season = "winter", year = "1996"),
+            Fixtures.anime(4, season = "fall", year = "2026"),
+            Fixtures.anime(5, "No season", season = null, year = null),
+        )
+
+        refresher.refreshSeason()
+
+        assertEquals(listOf(2, 4, 1, 3, 5), seasonIds())
+    }
+
+    @Test
     fun needsRefreshWhenEmptyOrOlderThan12Hours() = runTest {
         assertTrue(refresher.needsRefresh())
         api.season = listOf(Fixtures.anime(1))
