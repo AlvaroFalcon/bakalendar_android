@@ -23,9 +23,9 @@ fun Broadcast.getNextBroadcastString(context: Context): String {
     val broadcastHour = this.time.split(":")[0].toInt()
     val broadcastMinute = this.time.split(":")[1].toInt()
     val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone))
+        .withZoneSameInstant(broadcastZone())
     val zonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone)).withHour(broadcastHour)
+        .withZoneSameInstant(broadcastZone()).withHour(broadcastHour)
         .withMinute(broadcastMinute).withSecond(0)
     val nextBroadcastDate = when {
         day.value > todayZoned.dayOfWeek.value -> {
@@ -88,9 +88,9 @@ fun Broadcast.isAiringToday(): Boolean {
     val broadcastHour = this.time.split(":")[0].toInt()
     val broadcastMinute = this.time.split(":")[1].toInt()
     val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone))
+        .withZoneSameInstant(broadcastZone())
     val zonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone)).withHour(broadcastHour)
+        .withZoneSameInstant(broadcastZone()).withHour(broadcastHour)
         .withMinute(broadcastMinute).withSecond(0)
     val nextBroadcastDate = when {
         day.value > todayZoned.dayOfWeek.value -> {
@@ -121,3 +121,5 @@ fun Broadcast.isAiringToday(): Boolean {
     val hoursLeftForNewEpisode = ChronoUnit.HOURS.between(todayZoned, nextBroadcastDate) % 24
     return daysLeftForNextEpisode == 0L && hoursLeftForNewEpisode < 14
 }
+// MAL broadcasts are always JST; the API returns a null timezone when the schedule is unknown.
+private fun Broadcast.broadcastZone(): ZoneId = ZoneId.of(timeZone ?: "Asia/Tokyo")
