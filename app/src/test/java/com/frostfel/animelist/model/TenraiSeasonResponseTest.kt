@@ -3,7 +3,6 @@ package com.frostfel.animelist.model
 import com.frostfel.animelist.data.typeconverters.DatabaseTypeConverters
 import com.google.gson.Gson
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -41,7 +40,7 @@ class TenraiSeasonResponseTest {
         val noBroadcast = response.data[1]
         assertNull(noBroadcast.broadcast.day)
         assertNull(noBroadcast.broadcast.timeZone)
-        assertFalse(noBroadcast.broadcast.isAiringToday())
+        assertNull(noBroadcast.nextEpisodeAt())
 
         val notYetAired = response.data[2]
         assertNull(notYetAired.aired.from)
@@ -60,8 +59,4 @@ class TenraiSeasonResponseTest {
         }
     }
 
-    @Test
-    fun knownBroadcastWithoutTimezoneDoesNotCrash() {
-        Broadcast(day = "Fridays", time = "23:00", timeZone = null, stringValue = null).isAiringToday()
-    }
 }

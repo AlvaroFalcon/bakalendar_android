@@ -4,18 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.frostfel.animelist.MainActivityViewModel
+import com.frostfel.animelist.R
 import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
+import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.utils.getQueryFlow
 import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -26,11 +31,14 @@ import kotlinx.coroutines.launch
 open class SeasonAnimeFragment : Fragment() {
     private val viewModel by viewModels<SeasonAnimeViewModel>()
     private val activityViewModel by activityViewModels<MainActivityViewModel>()
-    private lateinit var binding: SeasonAnimeFragmentBinding
+    private val notificationPermission = NotificationPermissionRequest(this)
+    private var binding: SeasonAnimeFragmentBinding? = null
+    private var lastShownError: Throwable? = null
+    private var loadStates: CombinedLoadStates? = null
     private val adapter = AnimeListAdapter({ item ->
         activityViewModel.navigator.navigateToAnimeDetail(item)
     }, {
-        viewModel.onFavTap(it)
+        if (viewModel.onFavTap(it)) notificationPermission.requestIfNeeded()
     })
 
     companion object {
@@ -43,62 +51,78 @@ open class SeasonAnimeFragment : Fragment() {
             }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.isFav = it.getBoolean(IS_FAV_PARAM)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        observeData()
-        binding = SeasonAnimeFragmentBinding.inflate(inflater, container, false)
+        val binding = SeasonAnimeFragmentBinding.inflate(inflater, container, false)
+        this.binding = binding
         initView(binding)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     private fun initView(binding: SeasonAnimeFragmentBinding) {
         binding.recylcerView.layoutManager = LinearLayoutManager(activity)
         binding.recylcerView.adapter = adapter
-        setupSearchFlow(binding)
-    }
+        // Favourites live only in the local database, there is nothing to pull.
+        binding.swipeRefresh.isEnabled = !viewModel.isFav
+        binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
+        binding.retryButton.setOnClickListener { adapter.refresh() }
 
-    private fun setupSearchFlow(binding: SeasonAnimeFragmentBinding) {
-        lifecycleScope.launch {
-            binding.searchView.getQueryFlow()
-                .drop(1)
-                .debounce(200L)
-                .distinctUntilChanged()
-                .collect {
-                    viewModel.filterText.postValue(it)
-                }
-        }
-    }
-
-    private fun observeData() {
-        lifecycleScope.launch {
-            viewModel.filterText.observe(viewLifecycleOwner) {
-                setTextQuery(it)
+        val scope = viewLifecycleOwner.lifecycleScope
+        scope.launch { observeSearch(binding) }
+        scope.launch { viewModel.animeList.collectLatest { adapter.submitData(it) } }
+        scope.launch {
+            adapter.loadStateFlow.collect {
+                loadStates = it
+                render()
             }
         }
+        // Load states do not change when a favourite is removed or a search filters everything out.
+        scope.launch { adapter.onPagesUpdatedFlow.collect { render() } }
     }
 
-    private fun showContent() {
-        activity?.runOnUiThread {
-            binding.loading.isVisible = false
-            binding.resultContainer.visibility = View.VISIBLE
+    @OptIn(FlowPreview::class)
+    private suspend fun observeSearch(binding: SeasonAnimeFragmentBinding) {
+        binding.searchView.getQueryFlow()
+            .drop(1)
+            .debounce(200L)
+            .distinctUntilChanged()
+            .collect { viewModel.setQuery(it) }
+    }
+
+    private fun render() {
+        val binding = binding ?: return
+        val loadStates = loadStates ?: return
+        val remoteRefresh = loadStates.mediator?.refresh
+        val isRemoteLoading = remoteRefresh is LoadState.Loading
+        val remoteError = (remoteRefresh as? LoadState.Error)?.error
+        val isLocalLoading = loadStates.source.refresh is LoadState.Loading
+        val isEmpty = adapter.itemCount == 0
+
+        binding.loading.isVisible = isEmpty && (isRemoteLoading || isLocalLoading)
+        binding.swipeRefresh.isRefreshing = !isEmpty && isRemoteLoading
+
+        val message = when {
+            !isEmpty || isRemoteLoading || isLocalLoading -> null
+            remoteError != null -> R.string.season_load_error
+            binding.searchView.getQuery().isNotBlank() -> R.string.search_no_results
+            viewModel.isFav -> R.string.favorites_empty
+            else -> null
         }
-    }
+        binding.messageContainer.isVisible = message != null
+        message?.let { binding.messageText.setText(it) }
+        binding.retryButton.isVisible = message == R.string.season_load_error
 
-    private fun setTextQuery(query: String) {
-        lifecycleScope.launch {
-            viewModel.retrieveData(query).collectLatest {
-                showContent()
-                adapter.submitData(it)
-            }
+        // Data is still there from the cache: just let the user know it may be stale.
+        if (!isEmpty && remoteError != null && remoteError !== lastShownError) {
+            lastShownError = remoteError
+            Toast.makeText(requireContext(), R.string.offline_showing_cached, Toast.LENGTH_SHORT).show()
         }
     }
 }

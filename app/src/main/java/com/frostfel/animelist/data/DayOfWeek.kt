@@ -10,6 +10,9 @@ enum class DayOfWeek(val value: Int, val strValue: String) {
     SUNDAY(7, "sundays"),
     UNKNOWN(8, "UNKNOWN");
 
+    fun toJavaDayOfWeek(): java.time.DayOfWeek? =
+        if (this == UNKNOWN) null else java.time.DayOfWeek.of(value)
+
     companion object {
         fun from(day: String?): DayOfWeek {
             return when (day?.lowercase()) {

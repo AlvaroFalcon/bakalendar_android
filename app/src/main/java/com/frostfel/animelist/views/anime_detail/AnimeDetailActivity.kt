@@ -1,8 +1,8 @@
 package com.frostfel.animelist.views.anime_detail
 import android.os.Bundle
-import android.view.Window
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
 import com.frostfel.animelist.R
 import com.frostfel.animelist.databinding.ActivityAnimeDetailBinding
@@ -14,18 +14,23 @@ class AnimeDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAnimeDetailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         binding = ActivityAnimeDetailBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        hideStatusBar()
         val bundle = intent.extras
         val item = bundle?.getParcelable<AnimeWithPreferences?>(ANIME_EXTRA)
         startDetail(item)
     }
 
+
+    // The theme has no action bar; requestWindowFeature() after super.onCreate() crashes.
+    private fun hideStatusBar() {
+        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
 
     private fun startDetail(anime: AnimeWithPreferences?) {
         if(anime == null) {

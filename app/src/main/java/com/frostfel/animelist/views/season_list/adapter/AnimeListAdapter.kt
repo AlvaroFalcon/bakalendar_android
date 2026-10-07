@@ -9,7 +9,7 @@
     import com.frostfel.animelist.model.AnimeWithPreferences
     import com.frostfel.animelist.model.getNextBroadcastString
     import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
-    import com.squareup.picasso.Picasso
+    import com.frostfel.animelist.views.utils.loadCached
 
     class AnimeListAdapter(
         private val onClickAnime: (anime: AnimeWithPreferences) -> Unit,
@@ -36,10 +36,10 @@
                 with(item.anime) {
 
                 binding.header.headerTitleText.text =
-                    this.broadcast.getNextBroadcastString(binding.root.context)
+                    this.getNextBroadcastString(binding.root.context)
                 binding.animeTitle.text = this.title
                 binding.description.text = this.synopsis
-                Picasso.get().load(this.images.webp.largeImageUrl).into(binding.image)
+                binding.image.loadCached(this.images.webp.largeImageUrl)
                 val adapter = GenreListAdapter()
                 if (binding.genreContainer.itemDecorationCount == 0) binding.genreContainer.addItemDecoration(
                     AnimeListItemDecorator()

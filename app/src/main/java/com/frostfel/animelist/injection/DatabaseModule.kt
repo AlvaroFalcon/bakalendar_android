@@ -3,12 +3,10 @@ package com.frostfel.animelist.injection
 import android.content.Context
 import androidx.room.Room
 import com.frostfel.animelist.data.dao.AnimeDao
-import com.frostfel.animelist.data.dao.RemoteKeyDao
 import com.frostfel.animelist.data.migrations.MIGRATION_1_2
+import com.frostfel.animelist.data.migrations.MIGRATION_2_3
 import com.frostfel.animelist.data.repository.AnimeDbRepository
-import com.frostfel.animelist.data.repository.RemoteKeyRepository
 import com.frostfel.animelist.data.repository.impl.AnimeDbRepositoryImpl
-import com.frostfel.animelist.data.repository.impl.RemoteKeyRepositoryImpl
 import com.frostfel.animelist.data.storage.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -27,20 +25,9 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideRemoteKeyDao(appDatabase: AppDatabase): RemoteKeyDao {
-        return appDatabase.remoteKeyDao()
-    }
-
-    @Provides
     @Singleton
     fun provideAnimeDbRepository(animeDao: AnimeDao): AnimeDbRepository {
         return AnimeDbRepositoryImpl(animeDao)
-    }
-
-    @Provides
-    @Singleton
-    fun providesRemoteKeyRepository(remoteKeyDao: RemoteKeyDao): RemoteKeyRepository {
-        return RemoteKeyRepositoryImpl(remoteKeyDao)
     }
 
     @Provides
@@ -50,6 +37,6 @@ class DatabaseModule {
             appContext,
             AppDatabase::class.java,
             "BakalendarDB"
-        ).allowMainThreadQueries().addMigrations(MIGRATION_1_2).build()
+        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
     }
 }
