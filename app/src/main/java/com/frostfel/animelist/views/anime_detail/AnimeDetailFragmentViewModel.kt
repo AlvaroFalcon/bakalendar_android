@@ -3,7 +3,7 @@ package com.frostfel.animelist.views.anime_detail
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frostfel.animelist.data.repository.AnimeDbRepository
@@ -23,7 +23,7 @@ class AnimeDetailFragmentViewModel @Inject constructor(
             _animeId.value = id
         }
     }
-    val anime: LiveData<AnimeWithPreferences?> = Transformations.switchMap(_animeId) { id ->
+    val anime: LiveData<AnimeWithPreferences?> = _animeId.switchMap { id ->
         animeDbRepository.findAnimeWithPreferencesByIdLiveData(id)
     }
 

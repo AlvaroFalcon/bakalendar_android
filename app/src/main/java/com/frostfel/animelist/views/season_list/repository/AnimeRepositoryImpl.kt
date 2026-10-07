@@ -1,7 +1,7 @@
 package com.frostfel.animelist.views.season_list.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -24,7 +24,7 @@ class AnimeRepositoryImpl @Inject constructor(
     override fun getAnimeList(isFav: Boolean): LiveData<PagingData<AnimeWithPreferences>> {
         return if (isFav) {
             val favLiveData = animeDbRepository.getAllFav()
-            Transformations.map(favLiveData) { list ->
+            favLiveData.map { list ->
                 PagingData.from(list)
             }
         } else {
