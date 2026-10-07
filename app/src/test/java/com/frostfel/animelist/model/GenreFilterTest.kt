@@ -20,12 +20,13 @@ class GenreFilterTest {
     }
 
     @Test
-    fun matchesTitleAndGenre() {
-        assertTrue(action.matches("", null))
-        assertTrue(action.matches(" frie ", null))
-        assertTrue(action.matches("", "Fantasy"))
-        assertTrue(action.matches("frieren", "Adventure"))
-        assertFalse(action.matches("frieren", "Comedy"))
-        assertFalse(comedy.matches("", "Fantasy"))
+    fun matchesTitleAndAnyOfTheSelectedGenres() {
+        assertTrue(action.matches("", emptySet()))
+        assertTrue(action.matches(" frie ", emptySet()))
+        assertTrue(action.matches("", setOf("Fantasy")))
+        assertTrue(action.matches("", setOf("Comedy", "Adventure")))
+        assertTrue(action.matches("frieren", setOf("Adventure")))
+        assertFalse(action.matches("frieren", setOf("Comedy")))
+        assertFalse(comedy.matches("", setOf("Fantasy", "Drama")))
     }
 }

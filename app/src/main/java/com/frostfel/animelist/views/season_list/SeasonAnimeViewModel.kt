@@ -13,8 +13,11 @@ import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,29 +31,34 @@ class SeasonAnimeViewModel @Inject constructor(
 
     private val query = MutableStateFlow("")
 
-    val selectedGenre: StateFlow<String?> = savedStateHandle.getStateFlow(SELECTED_GENRE_KEY, null)
+    val selectedGenres: StateFlow<Set<String>> = savedStateHandle
+        .getStateFlow(SELECTED_GENRES_KEY, arrayListOf<String>())
+        .map { it.toSet() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
 
     val genres: Flow<List<String>> = animeRepository.getGenres(isFav)
 
     val animeList: Flow<PagingData<AnimeWithPreferences>> = combine(
         animeRepository.getAnimeList(isFav).cachedIn(viewModelScope),
         query,
-        selectedGenre
-    ) { data, text, genre ->
-        if (text.isBlank() && genre == null) data
-        else data.filter { it.anime.matches(text, genre) }
+        selectedGenres
+    ) { data, text, genres ->
+        if (text.isBlank() && genres.isEmpty()) data
+        else data.filter { it.anime.matches(text, genres) }
     }
 
     val hasActiveFilter: Boolean
-        get() = query.value.isNotBlank() || selectedGenre.value != null
+        get() = query.value.isNotBlank() || selectedGenres.value.isNotEmpty()
 
     fun setQuery(text: String) {
         query.value = text
     }
 
-    /** Selecting the active genre again clears the filter. */
+    /** Toggles [genre]; the list shows anime with any of the selected genres. */
     fun onGenreTap(genre: String) {
-        savedStateHandle[SELECTED_GENRE_KEY] = genre.takeIf { it != selectedGenre.value }
+        val current = selectedGenres.value
+        val updated = if (genre in current) current - genre else current + genre
+        savedStateHandle[SELECTED_GENRES_KEY] = ArrayList(updated)
     }
 
     /** Returns true when the anime has just been added to favourites. */
@@ -63,6 +71,6 @@ class SeasonAnimeViewModel @Inject constructor(
     }
 
     private companion object {
-        const val SELECTED_GENRE_KEY = "selected_genre"
+        const val SELECTED_GENRES_KEY = "selected_genres"
     }
 }

@@ -79,7 +79,7 @@ open class SeasonAnimeFragment : Fragment() {
         val scope = viewLifecycleOwner.lifecycleScope
         scope.launch { observeSearch(binding) }
         scope.launch {
-            combine(viewModel.genres, viewModel.selectedGenre, ::Pair).collect { (genres, selected) ->
+            combine(viewModel.genres, viewModel.selectedGenres, ::Pair).collect { (genres, selected) ->
                 renderGenres(binding, genres, selected)
             }
         }
@@ -103,9 +103,9 @@ open class SeasonAnimeFragment : Fragment() {
             .collect { viewModel.setQuery(it) }
     }
 
-    private fun renderGenres(binding: SeasonAnimeFragmentBinding, genres: List<String>, selected: String?) {
-        // Keep the selected genre visible even if it is no longer in the list.
-        val names = if (selected != null && selected !in genres) listOf(selected) + genres else genres
+    private fun renderGenres(binding: SeasonAnimeFragmentBinding, genres: List<String>, selected: Set<String>) {
+        // Keep selected genres visible even if they are no longer in the list.
+        val names = selected.filter { it !in genres }.sorted() + genres
         binding.genreFilterScroll.isVisible = names.isNotEmpty()
         val group = binding.genreFilter
         val current = (0 until group.childCount).map { (group.getChildAt(it) as Chip).text.toString() }
@@ -120,7 +120,7 @@ open class SeasonAnimeFragment : Fragment() {
         }
         (0 until group.childCount).forEach {
             val chip = group.getChildAt(it) as Chip
-            chip.isChecked = chip.text == selected
+            chip.isChecked = chip.text.toString() in selected
         }
     }
 

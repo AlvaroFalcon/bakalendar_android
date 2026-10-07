@@ -73,25 +73,33 @@ class GenreFilterUiTest {
         throw AssertionError("condition not met")
     }
 
+    private fun ChipGroup.chip(name: String) =
+        (0 until childCount).map { getChildAt(it) as Chip }.single { it.text == name }
+
     @Test
-    fun selectingAGenreFiltersTheListAndTappingAgainClearsIt() {
+    fun selectedGenresShowAnimeWithAnyOfThem() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 val list = activity.findViewById<RecyclerView>(R.id.recylcerView)
                 val chips = activity.findViewById<ChipGroup>(R.id.genreFilter)
                 waitUntil { list.adapter!!.itemCount == 3 && chips.childCount > 0 }
+                assertEquals("Fantasy", (chips.getChildAt(0) as Chip).text)
 
-                val names = (0 until chips.childCount).map { (chips.getChildAt(it) as Chip).text.toString() }
-                assertEquals("Fantasy", names.first())
+                // Drama: only Mushoku
+                chips.chip("Drama").performClick()
+                waitUntil { list.adapter!!.itemCount == 1 }
 
-                val fantasy = chips.getChildAt(0) as Chip
-                fantasy.performClick()
+                // Drama or Comedy: Mushoku and Spy x Family
+                chips.chip("Comedy").performClick()
                 waitUntil { list.adapter!!.itemCount == 2 }
-                assertEquals(true, fantasy.isChecked)
+                assertEquals(true, chips.chip("Drama").isChecked)
+                assertEquals(true, chips.chip("Comedy").isChecked)
 
-                fantasy.performClick()
+                // Deselect both: everything again
+                chips.chip("Drama").performClick()
+                chips.chip("Comedy").performClick()
                 waitUntil { list.adapter!!.itemCount == 3 }
-                assertEquals(false, fantasy.isChecked)
+                assertEquals(false, chips.chip("Comedy").isChecked)
             }
         }
     }

@@ -9,9 +9,10 @@ fun List<Anime>.genresByPopularity(): List<String> =
         .sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key })
         .map { it.key }
 
-fun Anime.matches(query: String, genre: String?): Boolean {
+/** Matches the title text and any of [selectedGenres] (no genres selected = all). */
+fun Anime.matches(query: String, selectedGenres: Set<String>): Boolean {
     val text = query.trim()
     val matchesText = text.isEmpty() || title?.contains(text, ignoreCase = true) == true
-    val matchesGenre = genre == null || genres.any { it.name == genre }
+    val matchesGenre = selectedGenres.isEmpty() || genres.any { it.name in selectedGenres }
     return matchesText && matchesGenre
 }
