@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
 import com.frostfel.animelist.databinding.ActivityMainBinding
 import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.pager.AnimeListPagerAdapter
 import com.frostfel.animelist.views.anime_detail.AnimeDetailActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), AnimeListNavigation {
@@ -20,6 +23,7 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     private lateinit var binding: ActivityMainBinding
     private val adapter = AnimeListPagerAdapter(this)
     private lateinit var tabTitles : Array<String>
+    private val notificationPermission = NotificationPermissionRequest(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -28,6 +32,12 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         initView()
         viewModel.initViewModel(this)
         viewModel.initNotifications(this)
+        // Users updating with favourites already saved have never been asked.
+        if (savedInstanceState == null) {
+            lifecycleScope.launch {
+                if (viewModel.hasFavourites()) notificationPermission.requestIfNeeded()
+            }
+        }
     }
 
     private fun initView() {

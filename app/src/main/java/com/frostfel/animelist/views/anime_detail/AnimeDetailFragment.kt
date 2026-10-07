@@ -9,9 +9,10 @@ import androidx.fragment.app.viewModels
 import com.frostfel.animelist.databinding.FragmentAnimeDetailBinding
 import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.model.getNextBroadcastString
+import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.views.season_list.adapter.GenreListAdapter
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
-import com.squareup.picasso.Picasso
+import com.frostfel.animelist.views.utils.loadCached
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val ANIME_PARAM = "ANIME_PARAM"
@@ -19,6 +20,7 @@ private const val ANIME_PARAM = "ANIME_PARAM"
 @AndroidEntryPoint
 class AnimeDetailFragment : Fragment() {
     private val viewModel by viewModels<AnimeDetailFragmentViewModel>()
+    private val notificationPermission = NotificationPermissionRequest(this)
     private lateinit var binding: FragmentAnimeDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +48,8 @@ class AnimeDetailFragment : Fragment() {
 
     private fun setupView(item: AnimeWithPreferences) {
         with(binding) {
-            Picasso.get().load(item.anime.images.webp.largeImageUrl).into(image)
-            context?.let { header.headerTitleText.text = item.anime.broadcast.getNextBroadcastString(it) }
+            image.loadCached(item.anime.images.webp.largeImageUrl)
+            context?.let { header.headerTitleText.text = item.anime.getNextBroadcastString(it) }
             animeTitle.text = item.anime.title
             description.text = item.anime.synopsis
             val adapter = GenreListAdapter()
@@ -57,7 +59,9 @@ class AnimeDetailFragment : Fragment() {
             adapter.setData(item.anime.genres)
             binding.genreContainer.adapter = adapter
             header.favoriteButton.setState(item.userPreferences?.starred ?: false)
-            header.favoriteButton.setOnClickListener { viewModel.onFavTap(item) }
+            header.favoriteButton.setOnClickListener {
+                if (viewModel.onFavTap(item)) notificationPermission.requestIfNeeded()
+            }
         }
     }
 

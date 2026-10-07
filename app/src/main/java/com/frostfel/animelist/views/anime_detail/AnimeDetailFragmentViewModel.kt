@@ -27,9 +27,12 @@ class AnimeDetailFragmentViewModel @Inject constructor(
         animeDbRepository.findAnimeWithPreferencesByIdLiveData(id)
     }
 
-    fun onFavTap(item: AnimeWithPreferences) {
+    /** Returns true when the anime has just been added to favourites. */
+    fun onFavTap(item: AnimeWithPreferences): Boolean {
+        val starred = item.userPreferences?.starred?.not() ?: true
         viewModelScope.launch {
-            animeDbRepository.setStarred(item.anime.malId, item.userPreferences?.starred?.not() ?: true)
+            animeDbRepository.setStarred(item.anime.malId, starred)
         }
+        return starred
     }
 }

@@ -47,5 +47,6 @@ data class Anime (
     @SerializedName("demographics") val demographics: List<GenericMalData>,
     @Deprecated("use from AnimeWithPreferences")
     val starred: Boolean = false,
+    /** 1-based position in the current season; 0 when it is only kept because it is a favourite. */
     var page: Int = 0
 ) : Parcelable

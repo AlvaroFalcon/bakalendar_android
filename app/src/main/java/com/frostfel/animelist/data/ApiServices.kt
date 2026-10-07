@@ -9,7 +9,8 @@ import retrofit2.http.Query
 interface ApiServices {
     @GET("seasons/now")
     suspend fun getCurrentSeason(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("limit") limit: Int = 25
     ): SeasonResponse
 
     @GET("anime/{id}")

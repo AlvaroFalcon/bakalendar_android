@@ -1,9 +1,7 @@
 package com.frostfel.animelist.views.season_list
 
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -13,26 +11,39 @@ import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SeasonAnimeViewModel @Inject constructor(
-    private val animeRepository: AnimeRepository,
+    savedStateHandle: SavedStateHandle,
+    animeRepository: AnimeRepository,
     private val animeDbRepository: AnimeDbRepository
-) : ViewModel(), LifecycleObserver {
-    var isFav = false
-    val filterText : MutableLiveData<String> = MutableLiveData("")
-    fun retrieveData(filter: String): Flow<PagingData<AnimeWithPreferences>> {
-        return animeRepository.getAnimeList(isFav).asFlow()
-            .map { it.filter { item -> item.anime.title?.contains(filter, ignoreCase = true) == true } }
-            .cachedIn(viewModelScope)
+) : ViewModel() {
+    val isFav: Boolean = savedStateHandle[SeasonAnimeFragment.IS_FAV_PARAM] ?: false
+
+    private val query = MutableStateFlow("")
+
+    val animeList: Flow<PagingData<AnimeWithPreferences>> = combine(
+        animeRepository.getAnimeList(isFav).cachedIn(viewModelScope),
+        query
+    ) { data, filter ->
+        if (filter.isBlank()) data
+        else data.filter { it.anime.title?.contains(filter.trim(), ignoreCase = true) == true }
     }
 
-    fun onFavTap(item: AnimeWithPreferences) {
+    fun setQuery(text: String) {
+        query.value = text
+    }
+
+    /** Returns true when the anime has just been added to favourites. */
+    fun onFavTap(item: AnimeWithPreferences): Boolean {
+        val starred = item.userPreferences?.starred?.not() ?: true
         viewModelScope.launch {
-            animeDbRepository.setStarred(item.anime.malId, item.userPreferences?.starred?.not() ?: true)
+            animeDbRepository.setStarred(item.anime.malId, starred)
         }
+        return starred
     }
 }

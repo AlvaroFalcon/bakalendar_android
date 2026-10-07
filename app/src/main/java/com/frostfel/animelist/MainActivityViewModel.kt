@@ -1,61 +1,24 @@
 package com.frostfel.animelist
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
-import com.frostfel.animelist.broadcast.AnimeAlertAlarm
-import com.frostfel.animelist.data.storage.DataPreferenceStore
+import com.frostfel.animelist.data.repository.AnimeDbRepository
+import com.frostfel.animelist.notifications.FavouritesNotificationScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-) : ViewModel(), LifecycleObserver {
+    private val animeDbRepository: AnimeDbRepository
+) : ViewModel() {
     lateinit var navigator: AnimeListNavigation
     fun initViewModel(animeListNavigation: AnimeListNavigation) {
         navigator = animeListNavigation
     }
 
-    fun initNotifications(context: Context?) {
-        context?.let {
-            if (DataPreferenceStore.isFirstTime(it)) {
-                createNotificationChannel(it)
-                DataPreferenceStore.setFirstTime(it)
-                val alarmManager = it.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                val alarmIntent: PendingIntent =
-                    Intent(it, AnimeAlertAlarm::class.java).let { intent ->
-                        PendingIntent.getBroadcast(it, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-                    }
-
-                val calendar: Calendar = Calendar.getInstance().apply {
-                    timeInMillis = System.currentTimeMillis()
-                    set(Calendar.HOUR_OF_DAY, 10)
-                }
-
-                alarmManager.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY,
-                    alarmIntent
-                )
-
-            }
-        }
+    fun initNotifications(context: Context) {
+        FavouritesNotificationScheduler.schedule(context.applicationContext)
     }
 
-    private fun createNotificationChannel(context: Context) {
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel("fav_anime", "Anime alerts channel", importance).apply {
-            description = "Notification for anime alerts schedule"
-        }
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
+    suspend fun hasFavourites(): Boolean = animeDbRepository.getAllFav().isNotEmpty()
 }

@@ -1,49 +1,33 @@
 package com.frostfel.animelist.views.season_list.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.liveData
-import com.frostfel.animelist.data.ApiServices
-import com.frostfel.animelist.data.mediators.AnimeRemoteMediator
+import com.frostfel.animelist.data.mediators.SeasonRemoteMediator
 import com.frostfel.animelist.data.repository.AnimeDbRepository
-import com.frostfel.animelist.data.storage.AppDatabase
-import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.data.season.SeasonRefresher
 import com.frostfel.animelist.model.AnimeWithPreferences
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AnimeRepositoryImpl @Inject constructor(
-    private val apiServices: ApiServices,
     private val animeDbRepository: AnimeDbRepository,
-    private val appDatabase: AppDatabase
+    private val seasonRefresher: SeasonRefresher,
 ) : AnimeRepository {
+
     @OptIn(ExperimentalPagingApi::class)
-    override fun getAnimeList(isFav: Boolean): LiveData<PagingData<AnimeWithPreferences>> {
+    override fun getAnimeList(isFav: Boolean): Flow<PagingData<AnimeWithPreferences>> {
         return if (isFav) {
-            val favLiveData = animeDbRepository.getAllFav()
-            favLiveData.map { list ->
-                PagingData.from(list)
-            }
+            animeDbRepository.getAllFavFlow().map { PagingData.from(it) }
         } else {
             Pager(
-                config = PagingConfig(
-                    pageSize = PAGE_SIZE,
-                    prefetchDistance = 10,
-                    initialLoadSize = PAGE_SIZE
-                ),
-                remoteMediator =  AnimeRemoteMediator(appDatabase,apiServices),
-                pagingSourceFactory = { animeDbRepository.pagingSource() },
-
-            ).liveData
+                config = PagingConfig(pageSize = PAGE_SIZE, initialLoadSize = PAGE_SIZE),
+                remoteMediator = SeasonRemoteMediator(seasonRefresher),
+                pagingSourceFactory = { animeDbRepository.seasonPagingSource() },
+            ).flow
         }
-
-    }
-
-    override suspend fun getAnimeById(id: Int): Anime {
-        return apiServices.getAnimeById(id).data
     }
 
     companion object {

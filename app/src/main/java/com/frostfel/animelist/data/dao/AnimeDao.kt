@@ -3,82 +3,82 @@ package com.frostfel.animelist.data.dao
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.AnimePreferences
 import com.frostfel.animelist.model.AnimeWithPreferences
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AnimeDao {
-    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
-    suspend fun insertAll(animes: List<Anime> )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(animes: List<Anime>)
 
-    @Insert
-    suspend fun insert(anime: Anime)
-
-    @Query("DELETE FROM anime")
-    suspend fun clearAll()
-
-    @Delete
-    suspend fun deleteAnime(anime: Anime)
-
-    @Update(entity = Anime::class)
-    fun update(anime: Anime)
-
+    /** Current season, in the order returned by the API. */
     @Transaction
-    @Query("SELECT * FROM anime WHERE malId=:id ")
-    suspend fun findAnimeById(id: Int): AnimeWithPreferences?
+    @Query("SELECT * FROM anime WHERE page > 0 ORDER BY page")
+    fun seasonPagingSource(): PagingSource<Int, AnimeWithPreferences>
+
+    @Query("SELECT COUNT(*) FROM anime WHERE page > 0")
+    suspend fun countSeason(): Int
+
+    /**
+     * Drops what is no longer in the season. Favourites are kept (with page = 0) so they
+     * survive a season change and stay available offline.
+     */
+    @Query(
+        """
+        DELETE FROM anime
+        WHERE malId NOT IN (:seasonIds)
+        AND malId NOT IN (SELECT malId FROM user_anime_preferences WHERE starred = 1)
+        """
+    )
+    suspend fun deleteOutsideSeasonExceptFavourites(seasonIds: List<Int>)
+
+    @Query("UPDATE anime SET page = 0 WHERE malId NOT IN (:seasonIds)")
+    suspend fun markOutsideSeason(seasonIds: List<Int>)
+
+    @Query(
+        """
+        SELECT * FROM anime
+        WHERE page = 0 AND airing = 1
+        AND malId IN (SELECT malId FROM user_anime_preferences WHERE starred = 1)
+        """
+    )
+    suspend fun getAiringFavouritesOutsideSeason(): List<Anime>
 
     @Transaction
     @Query("SELECT * FROM anime WHERE malId = :id")
     fun findAnimeWithPreferencesByIdLiveData(id: Int): LiveData<AnimeWithPreferences?>
 
-    @Transaction
-    @Query("SELECT * FROM anime WHERE malId=:id")
-    fun findAnimeByIdLiveData(id: Int): LiveData<List<AnimeWithPreferences>>
-
-    @Transaction
-    @Query("SELECT * FROM anime order by page")
-    fun pagingSource(): PagingSource<Int, AnimeWithPreferences>
-
-    @Transaction
-    @Query("SELECT * FROM anime")
-    fun getAll(): LiveData<List<AnimeWithPreferences>>
-
-    @Transaction
-    @Query("SELECT * FROM anime")
-    fun getAllNoLive(): List<AnimeWithPreferences>
-
-    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
-    fun setStarred(animePreferences: AnimePreferences)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setStarred(animePreferences: AnimePreferences)
 
     @Query("DELETE FROM user_anime_preferences WHERE malId = :malId")
-    fun removeStarred(malId: Int)
+    suspend fun removeStarred(malId: Int)
 
     @Transaction
-    @Query("""
-    SELECT * 
-    FROM anime
-    WHERE malId IN (
-        SELECT malId 
-        FROM user_anime_preferences 
-        WHERE starred = 1
+    @Query(
+        """
+        SELECT anime.* FROM anime
+        INNER JOIN user_anime_preferences AS prefs ON prefs.malId = anime.malId
+        WHERE prefs.starred = 1
+        ORDER BY prefs.starredAt DESC
+        """
     )
-""")
-    fun getAllFavNoLive(): List<AnimeWithPreferences>
+    suspend fun getAllFav(): List<AnimeWithPreferences>
+
     @Transaction
-    @Query("""
-    SELECT * 
-    FROM anime
-    WHERE malId IN (
-        SELECT malId 
-        FROM user_anime_preferences 
-        WHERE starred = 1
+    @Query(
+        """
+        SELECT anime.* FROM anime
+        INNER JOIN user_anime_preferences AS prefs ON prefs.malId = anime.malId
+        WHERE prefs.starred = 1
+        ORDER BY prefs.starredAt DESC
+        """
     )
-""")
-    fun getAllFav(): LiveData<List<AnimeWithPreferences>>
+    fun getAllFavFlow(): Flow<List<AnimeWithPreferences>>
 }
