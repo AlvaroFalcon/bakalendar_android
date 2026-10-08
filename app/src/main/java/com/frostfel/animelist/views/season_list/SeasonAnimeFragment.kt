@@ -20,11 +20,11 @@ import com.frostfel.animelist.model.SortOrder
 import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.utils.getQueryFlow
 import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -155,21 +155,23 @@ open class SeasonAnimeFragment : Fragment() {
         sheetBinding.sortNextEpisode.setOnClickListener { viewModel.setSortOrder(SortOrder.NEXT_EPISODE) }
         sheetBinding.clearButton.setOnClickListener { viewModel.clearSheetFilters() }
 
-        var job: Job? = null
-        dialog.setOnShowListener {
-            job = viewLifecycleOwner.lifecycleScope.launch {
-                combine(viewModel.genres, viewModel.selectedGenres, viewModel.sortOrder, ::Triple)
-                    .collect { (genres, selected, order) ->
-                        sheetBinding.sortPopularity.isChecked = order == SortOrder.POPULARITY
-                        sheetBinding.sortNextEpisode.isChecked = order == SortOrder.NEXT_EPISODE
-                        renderGenres(sheetBinding, genres, selected)
-                    }
-            }
+        fun render(genres: List<String>, selected: Set<String>, order: SortOrder) {
+            sheetBinding.sortPopularity.isChecked = order == SortOrder.POPULARITY
+            sheetBinding.sortNextEpisode.isChecked = order == SortOrder.NEXT_EPISODE
+            renderGenres(sheetBinding, genres, selected)
+        }
+        // Fill it before showing, so it opens at its final size instead of growing.
+        render(viewModel.genres.value, viewModel.selectedGenres.value, viewModel.sortOrder.value)
+        val job = viewLifecycleOwner.lifecycleScope.launch {
+            combine(viewModel.genres, viewModel.selectedGenres, viewModel.sortOrder, ::Triple)
+                .collect { (genres, selected, order) -> render(genres, selected, order) }
         }
         dialog.setOnDismissListener {
-            job?.cancel()
+            job.cancel()
             filterSheet = null
         }
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         filterSheet = dialog
         dialog.show()
     }

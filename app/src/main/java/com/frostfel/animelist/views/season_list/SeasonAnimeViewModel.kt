@@ -50,7 +50,9 @@ class SeasonAnimeViewModel @Inject constructor(
         .map { SortOrder.valueOf(it) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, SortOrder.POPULARITY)
 
-    val genres: Flow<List<String>> = animeRepository.getGenres(isFav)
+    /** Kept up to date while the screen is alive, so the filters sheet opens already filled. */
+    val genres: StateFlow<List<String>> = animeRepository.getGenres(isFav)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /** True for the compact list, false for big cards. */
     val listMode: StateFlow<Boolean> = displayModeStore.listMode

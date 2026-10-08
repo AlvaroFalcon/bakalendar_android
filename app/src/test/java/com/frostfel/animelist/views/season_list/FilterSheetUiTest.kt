@@ -88,9 +88,11 @@ class FilterSheetUiTest {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 waitUntil { activity.ids().size == 3 }
-                val sheet = activity.openFilters()
+                activity.findViewById<ImageButton>(R.id.filterButton).performClick()
+                // Genres are there as soon as the sheet opens (no reload, no resize).
+                val sheet = ShadowDialog.getLatestDialog() as BottomSheetDialog
                 val genres = sheet.findViewById<ChipGroup>(R.id.genreFilter)!!
-                waitUntil { genres.childCount > 0 }
+                assertEquals(5, genres.childCount)
                 assertEquals("Fantasy", (genres.getChildAt(0) as Chip).text)
 
                 sheet.genre("Drama").performClick()
