@@ -16,6 +16,12 @@
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <!-- Translucent so the list shows through while the detail is dragged down to close. -->
+    <style name="Theme.Bakalendar.Detail">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
     <style name="Searching" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">@color/black</item>
     </style>

@@ -1,13 +1,20 @@
 package com.frostfel.animelist.views.anime_detail
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.frostfel.animelist.databinding.FragmentAnimeDetailBinding
 import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.model.TrailerInfo
+import com.frostfel.animelist.model.thumbnailUrl
+import com.frostfel.animelist.model.watchUrl
 import com.frostfel.animelist.model.getNextBroadcastString
 import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.views.season_list.adapter.GenreListAdapter
@@ -59,9 +66,28 @@ class AnimeDetailFragment : Fragment() {
             adapter.setData(item.anime.genres)
             binding.genreContainer.adapter = adapter
             header.favoriteButton.setState(item.userPreferences?.starred ?: false)
+            bindTrailer(item.anime.trailer)
             header.favoriteButton.setOnClickListener {
                 if (viewModel.onFavTap(item)) notificationPermission.requestIfNeeded()
             }
+        }
+    }
+
+    private fun bindTrailer(trailer: TrailerInfo?) {
+        val watchUrl = trailer?.watchUrl
+        binding.trailer.isVisible = watchUrl != null
+        if (watchUrl == null) return
+        binding.trailerImage.loadCached(trailer.thumbnailUrl)
+        binding.trailer.setOnClickListener { openTrailer(trailer.youtubeId!!, watchUrl) }
+    }
+
+    /** Opens the YouTube app when installed, the browser otherwise. */
+    private fun openTrailer(youtubeId: String, watchUrl: String) {
+        val app = Intent(Intent.ACTION_VIEW, "vnd.youtube:$youtubeId".toUri())
+        try {
+            startActivity(app)
+        } catch (noApp: ActivityNotFoundException) {
+            startActivity(Intent(Intent.ACTION_VIEW, watchUrl.toUri()))
         }
     }
 

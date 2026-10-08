@@ -1,5 +1,7 @@
 package com.frostfel.animelist.views.anime_detail
+import android.os.Build
 import android.os.Bundle
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -18,11 +20,37 @@ class AnimeDetailActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         hideStatusBar()
+        initSwipeToDismiss()
         val bundle = intent.extras
         val item = bundle?.getParcelable<AnimeWithPreferences?>(ANIME_EXTRA)
         startDetail(item)
     }
 
+
+    /** Drag down to close; the description keeps scrolling until it is back at the top. */
+    private fun initSwipeToDismiss() {
+        binding.dismissLayout.onDismiss = {
+            finish()
+            disableCloseAnimation()
+        }
+        binding.dismissLayout.canScrollUp = { event ->
+            val scroll = findViewById<ScrollView>(R.id.scroll)
+            val location = IntArray(2)
+            scroll?.getLocationOnScreen(location)
+            scroll != null && scroll.canScrollVertically(-1) &&
+                event.rawY >= location[1] && event.rawY <= location[1] + scroll.height
+        }
+    }
+
+    /** The content already slid out; skip the default close animation. */
+    @Suppress("DEPRECATION")
+    private fun disableCloseAnimation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
+        } else {
+            overridePendingTransition(0, 0)
+        }
+    }
 
     // The theme has no action bar; requestWindowFeature() after super.onCreate() crashes.
     private fun hideStatusBar() {

@@ -33,6 +33,7 @@
     <string name="notification_channel_name">Favorite anime airing</string>
     <string name="notification_channel_description">Daily reminder of your favorite anime airing in the next 24 hours</string>
     <string name="search_clear">Clear search</string>
+    <string name="watch_trailer">Watch trailer</string>
     <string name="filters">Filters</string>
     <string name="filters_clear">Clear</string>
     <string name="sort_by">Sort by</string>
