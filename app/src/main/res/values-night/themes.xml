@@ -15,14 +15,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="textInputStyle">@style/SearchInputLayoutStyle</item>
     </style>
     <style name="Searching" parent="TextAppearance.Design.Hint">
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="SearchInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="hintTextColor">@color/textInputLayoutHint</item>
-    </style>
 
 </resources>

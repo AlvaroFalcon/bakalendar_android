@@ -55,7 +55,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.frostfel.animelist.views.utils.TopFadingRecyclerView
             android:id="@+id/recylcerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -1,5 +1,7 @@
 package com.frostfel.animelist
 
+import android.view.View
+import android.widget.EditText
 import android.widget.ImageButton
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -19,6 +21,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -47,7 +50,11 @@ class MainScreenTest {
         hiltRule.inject()
         AppTestSetup.init()
         runBlocking {
-            db.animeDao().insertAll((1..3).map { Fixtures.anime(it).copy(page = it) })
+            db.animeDao().insertAll(
+                listOf("Frieren", "Spy x Family", "Mushoku").mapIndexed { index, title ->
+                    Fixtures.anime(index + 1, title).copy(page = index + 1)
+                }
+            )
         }
         cacheStore.lastRefreshMillis = System.currentTimeMillis()
     }
@@ -88,6 +95,28 @@ class MainScreenTest {
 
                 val next = shadowOf(activity).nextStartedActivity
                 assertEquals(CalendarActivity::class.java.name, next.component?.className)
+            }
+        }
+    }
+
+    @Test
+    fun searchFiltersByTitleAndClearResetsIt() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recylcerView)
+                val field = activity.findViewById<EditText>(R.id.searchField)
+                val clear = activity.findViewById<View>(R.id.clearView)
+                waitUntil { list.adapter!!.itemCount == 3 }
+                assertFalse(clear.isVisible)
+
+                field.setText("fam")
+                waitUntil { list.adapter!!.itemCount == 1 }
+                assertTrue(clear.isVisible)
+
+                clear.performClick()
+                waitUntil { list.adapter!!.itemCount == 3 }
+                assertEquals("", field.text.toString())
+                assertFalse(clear.isVisible)
             }
         }
     }
