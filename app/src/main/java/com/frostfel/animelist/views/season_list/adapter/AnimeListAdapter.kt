@@ -3,7 +3,7 @@ package com.frostfel.animelist.views.season_list.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.frostfel.animelist.databinding.AnimeListItemBinding
@@ -17,7 +17,7 @@ import com.frostfel.animelist.views.utils.loadCached
 class AnimeListAdapter(
     private val onClickAnime: (anime: AnimeWithPreferences) -> Unit,
     private val onClickFav: (animeWithPreferences: AnimeWithPreferences) -> Unit,
-) : PagingDataAdapter<AnimeWithPreferences, RecyclerView.ViewHolder>(AnimeComparator) {
+) : ListAdapter<AnimeWithPreferences, RecyclerView.ViewHolder>(AnimeComparator) {
 
     var listMode: Boolean = false
         @SuppressLint("NotifyDataSetChanged") // every row changes layout
@@ -39,7 +39,7 @@ class AnimeListAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = getItem(position) ?: return
+        val item = getItem(position)
         when (holder) {
             is CardViewHolder -> holder.bind(item, onClickAnime, onClickFav)
             is RowViewHolder -> AnimeRowBinder.bind(

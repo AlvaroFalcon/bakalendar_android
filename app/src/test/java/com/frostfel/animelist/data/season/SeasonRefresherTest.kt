@@ -42,13 +42,8 @@ class SeasonRefresherTest {
     @After
     fun tearDown() = db.close()
 
-    private suspend fun seasonIds(): List<Int> {
-        val source = db.animeDao().seasonPagingSource()
-        val result = source.load(
-            androidx.paging.PagingSource.LoadParams.Refresh(null, 500, false)
-        ) as androidx.paging.PagingSource.LoadResult.Page
-        return result.data.map { it.anime.malId }
-    }
+    private suspend fun seasonIds(): List<Int> =
+        db.animeDao().seasonWithPreferencesFlow().first().map { it.anime.malId }
 
     @Test
     fun downloadsEveryPageInApiOrder() = runTest {

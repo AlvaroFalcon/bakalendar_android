@@ -14,15 +14,30 @@
         android:layout_marginTop="22dp"
         android:layout_marginEnd="6dp"
         android:layout_marginBottom="22dp"
-        app:layout_constraintEnd_toStartOf="@id/displayModeButton"
+        app:layout_constraintEnd_toStartOf="@id/filterButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
+        android:id="@+id/filterButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/filters"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_filter"
+        app:layout_constraintBottom_toBottomOf="@id/searchView"
+        app:layout_constraintEnd_toStartOf="@id/displayModeButton"
+        app:layout_constraintTop_toTopOf="@id/searchView"
+        app:tint="@color/white" />
+
+    <ImageButton
         android:id="@+id/displayModeButton"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="14dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/show_as_list"
         android:src="@drawable/ic_view_list"
@@ -31,31 +46,13 @@
         app:layout_constraintTop_toTopOf="@id/searchView"
         app:tint="@color/white" />
 
-    <HorizontalScrollView
-        android:id="@+id/genreFilterScroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:paddingHorizontal="22dp"
-        android:scrollbars="none"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/searchView"
-        tools:visibility="visible">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/genreFilter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:chipSpacingHorizontal="8dp"
-            app:singleLine="true" />
-    </HorizontalScrollView>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/genreFilterScroll">
+        app:layout_constraintTop_toBottomOf="@id/searchView">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recylcerView"

@@ -2,6 +2,7 @@ package com.frostfel.animelist
 
 import android.widget.ImageButton
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
@@ -18,6 +19,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -60,6 +62,10 @@ class MainScreenTest {
 
                 activity.findViewById<ImageButton>(R.id.displayModeButton).performClick()
                 waitUntil { list.findViewHolderForAdapterPosition(0) is AnimeListAdapter.RowViewHolder }
+                // The row shows the countdown to the next episode, bottom right.
+                val row = list.findViewHolderForAdapterPosition(0) as AnimeListAdapter.RowViewHolder
+                assertTrue(row.binding.nextEpisode.isVisible)
+                assertTrue(row.binding.nextEpisode.text.startsWith("Next episode in"))
 
                 activity.findViewById<ImageButton>(R.id.displayModeButton).performClick()
                 waitUntil { list.findViewHolderForAdapterPosition(0) is AnimeListAdapter.CardViewHolder }

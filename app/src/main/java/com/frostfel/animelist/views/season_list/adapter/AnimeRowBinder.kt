@@ -3,6 +3,7 @@ package com.frostfel.animelist.views.season_list.adapter
 import androidx.core.view.isVisible
 import com.frostfel.animelist.databinding.AnimeListRowBinding
 import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.model.getNextBroadcastString
 import com.frostfel.animelist.views.season_list.decorator.AnimeListItemDecorator
 import com.frostfel.animelist.views.utils.loadCached
 
@@ -19,6 +20,9 @@ object AnimeRowBinder {
         binding.airTime.isVisible = airTime != null
         binding.airTime.text = airTime
         binding.animeTitle.text = anime.title
+        val nextEpisode = anime.getNextBroadcastString(binding.root.context)
+        binding.nextEpisode.isVisible = nextEpisode.isNotBlank()
+        binding.nextEpisode.text = nextEpisode
         binding.description.text = anime.synopsis
         binding.image.loadCached(anime.images.webp.largeImageUrl)
         if (binding.genreContainer.itemDecorationCount == 0) {

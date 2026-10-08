@@ -1,7 +1,6 @@
 package com.frostfel.animelist.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -17,10 +16,10 @@ interface AnimeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(animes: List<Anime>)
 
-    /** Current season, in the order returned by the API. */
+    /** Current season, in the order it was downloaded (new shows first). */
     @Transaction
     @Query("SELECT * FROM anime WHERE page > 0 ORDER BY page")
-    fun seasonPagingSource(): PagingSource<Int, AnimeWithPreferences>
+    fun seasonWithPreferencesFlow(): Flow<List<AnimeWithPreferences>>
 
     @Query("SELECT * FROM anime WHERE page > 0")
     fun seasonFlow(): Flow<List<Anime>>

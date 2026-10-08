@@ -10,10 +10,10 @@ follows the Jikan v4 schema.
 
 - **Season list**: every anime airing this season, including series continuing from previous
   seasons (new shows first). Each entry shows a countdown to its next episode.
-- **Cards or list**: big cards, or a compact list with the cover on the left. The choice is
-  remembered.
-- **Search and genre filter**: search by title and filter by one or more genres (anime
-  matching any of the selected genres are shown).
+- **Cards or list**: big cards, or a compact list with the cover on the left and the countdown
+  to the next episode. The choice is remembered.
+- **Search, filters and sorting**: search by title; the filters sheet sorts by popularity or
+  by soonest next episode and filters by one or more genres (anime matching any of them).
 - **Favorites**: star any anime. Favorites are kept even after their season ends.
 - **Weekly calendar**: Monday to Sunday, what airs each day at your local time, optionally
   only your favorites. Open it from the menu in the top right corner.
@@ -26,7 +26,7 @@ follows the Jikan v4 schema.
 
 - Kotlin, coroutines and Flow
 - MVVM with AndroidX ViewModel, Hilt for dependency injection
-- Room as the single source of truth, Paging 3 with a `RemoteMediator`
+- Room as the single source of truth (Flow), refreshed by a `SeasonRefresher`
 - Retrofit + OkHttp + Gson for the API, Picasso for images
 - WorkManager for the daily notification
 - View-based UI with ViewBinding and Material Components

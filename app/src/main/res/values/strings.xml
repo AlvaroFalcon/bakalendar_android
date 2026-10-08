@@ -32,6 +32,12 @@
     <string name="search_no_results">No anime matches your search or filter.</string>
     <string name="notification_channel_name">Favorite anime airing</string>
     <string name="notification_channel_description">Daily reminder of your favorite anime airing in the next 24 hours</string>
+    <string name="filters">Filters</string>
+    <string name="filters_clear">Clear</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_popularity">Popularity</string>
+    <string name="sort_next_episode">Next episode</string>
+    <string name="genres">Genres</string>
     <string name="show_as_list">Show as list</string>
     <string name="show_as_cards">Show as cards</string>
     <string name="favorite_button_content_desc">Add to favorites</string>
