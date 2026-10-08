@@ -45,7 +45,7 @@ import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
 
-private const val ANIME_PARAM = "ANIME_PARAM"
+private const val ANIME_ID_PARAM = "ANIME_ID"
 private const val SYNOPSIS_LINES = 5
 
 /**
@@ -59,15 +59,20 @@ class AnimeDetailFragment : Fragment() {
     private lateinit var binding: FragmentAnimeDetailBinding
     private var boundAnimeId: Int? = null
     private var synopsisExpanded = false
+    private val relatedAdapter = RelatedAdapter { item ->
+        if (item.isAnime) {
+            startActivity(AnimeDetailActivity.intent(requireContext(), item.malId))
+        } else {
+            item.url?.let(::openUrl)
+        }
+    }
 
     @ColorInt
     private var accent: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.setAnimeId(it.getParcelable<AnimeWithPreferences>(ANIME_PARAM)?.anime?.malId ?: 0)
-        }
+        viewModel.setAnimeId(requireArguments().getInt(ANIME_ID_PARAM))
     }
 
     override fun onCreateView(
@@ -78,6 +83,8 @@ class AnimeDetailFragment : Fragment() {
         accent = ContextCompat.getColor(requireContext(), R.color.primary_color)
         binding.toolbar.setNavigationOnClickListener { requireActivity().finish() }
         binding.readMore.setOnClickListener { toggleSynopsis() }
+        binding.loadRetry.setOnClickListener { viewModel.retry() }
+        binding.related.adapter = relatedAdapter
         // The favourite button folds into just the star while scrolling down.
         binding.scroll.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY > oldScrollY + 8) binding.favoriteFab.shrink()
@@ -89,9 +96,27 @@ class AnimeDetailFragment : Fragment() {
 
     private fun observeData() {
         viewModel.anime.observe(viewLifecycleOwner) {
+            renderLoadState(it != null)
             it ?: return@observe
             setupView(it)
         }
+        viewModel.loadFailed.observe(viewLifecycleOwner) {
+            renderLoadState(viewModel.anime.value != null)
+        }
+        viewModel.related.observe(viewLifecycleOwner) { items ->
+            binding.relatedTitle.isVisible = items.isNotEmpty()
+            binding.related.isVisible = items.isNotEmpty()
+            relatedAdapter.submitList(items)
+        }
+    }
+
+    /** Only for anime that are not cached yet (e.g. opened from "Related"). */
+    private fun renderLoadState(hasAnime: Boolean) {
+        val failed = viewModel.loadFailed.value == true
+        binding.loadState.isVisible = !hasAnime
+        binding.loadProgress.isVisible = !hasAnime && !failed
+        binding.loadError.isVisible = !hasAnime && failed
+        binding.loadRetry.isVisible = !hasAnime && failed
     }
 
     private fun setupView(item: AnimeWithPreferences) {
@@ -245,6 +270,7 @@ class AnimeDetailFragment : Fragment() {
         binding.readMore.setTextColor(accent)
         binding.malButton.setTextColor(accent)
         binding.malButton.iconTint = accentList
+        relatedAdapter.accent = accent
         binding.malButton.strokeColor = ColorStateList.valueOf(ColorUtils.blendARGB(accent, Color.WHITE, 0.6f))
         // Genres take the accent; the neutral stats stay grey.
         val group = binding.genres
@@ -314,11 +340,9 @@ class AnimeDetailFragment : Fragment() {
         private const val GENRE_TAG = "genre"
         private val SCORE_STAR_COLOR = "#F5B301".toColorInt()
 
-        fun newInstance(anime: AnimeWithPreferences?) =
+        fun newInstance(malId: Int) =
             AnimeDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ANIME_PARAM, anime)
-                }
+                arguments = Bundle().apply { putInt(ANIME_ID_PARAM, malId) }
             }
     }
 }

@@ -1,6 +1,5 @@
 package com.frostfel.animelist.views.calendar
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -66,9 +65,6 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun openDetail(anime: AnimeWithPreferences) {
-        startActivity(
-            Intent(this, AnimeDetailActivity::class.java)
-                .putExtra(AnimeDetailActivity.ANIME_EXTRA, anime)
-        )
+        startActivity(AnimeDetailActivity.intent(this, anime.anime.malId))
     }
 }

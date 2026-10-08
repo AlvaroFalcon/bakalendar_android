@@ -98,9 +98,6 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
     }
 
     override fun navigateToAnimeDetail(anime: AnimeWithPreferences) {
-        val detailIntent = Intent(this, AnimeDetailActivity::class.java)
-        val bundle = Bundle().apply { putParcelable(AnimeDetailActivity.ANIME_EXTRA, anime) }
-        detailIntent.putExtras(bundle)
-        startActivity(detailIntent)
+        startActivity(AnimeDetailActivity.intent(this, anime.anime.malId))
     }
 }

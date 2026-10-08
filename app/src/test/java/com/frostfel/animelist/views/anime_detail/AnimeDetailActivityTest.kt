@@ -13,9 +13,13 @@ import androidx.test.core.app.ApplicationProvider
 import com.frostfel.animelist.R
 import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
-import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.model.RelatedEntry
+import com.frostfel.animelist.model.RelationGroup
+import com.frostfel.animelist.model.RelationsResponse
+import androidx.recyclerview.widget.RecyclerView
 import com.frostfel.animelist.testing.AppTestSetup
 import com.frostfel.animelist.testing.AppTestSetup.waitUntil
+import com.frostfel.animelist.testing.FakeApiServices
 import com.frostfel.animelist.testing.Fixtures
 import com.frostfel.animelist.views.utils.SwipeToDismissLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -58,9 +62,13 @@ class AnimeDetailActivityTest {
         runBlocking { db.animeDao().insertAll(listOf(withTrailer.copy(page = 1), withoutTrailer.copy(page = 2))) }
     }
 
-    private fun launch(anime: Anime) = ActivityScenario.launch<AnimeDetailActivity>(
-        Intent(ApplicationProvider.getApplicationContext(), AnimeDetailActivity::class.java)
-            .putExtra(AnimeDetailActivity.ANIME_EXTRA, AnimeWithPreferences(anime, null))
+    @Inject
+    lateinit var api: FakeApiServices
+
+    private fun launch(anime: Anime) = launch(anime.malId)
+
+    private fun launch(malId: Int) = ActivityScenario.launch<AnimeDetailActivity>(
+        AnimeDetailActivity.intent(ApplicationProvider.getApplicationContext(), malId)
     )
 
     @Test
@@ -190,6 +198,76 @@ class AnimeDetailActivityTest {
                 assertEquals(5, description.maxLines)
                 activity.findViewById<View>(R.id.readMore).performClick()
                 assertEquals(Int.MAX_VALUE, description.maxLines)
+            }
+        }
+    }
+
+    @Test
+    fun relatedAnimeOpenInTheAppAndMangaOnMyAnimeList() {
+        api.relations = mapOf(
+            withTrailer.malId to RelationsResponse(
+                listOf(
+                    RelationGroup("Adaptation", listOf(RelatedEntry(7, "manga", "The manga", "https://myanimelist.net/manga/7", "Manga", null))),
+                    RelationGroup("Prequel", listOf(RelatedEntry(58514, "anime", "Season 2", "https://myanimelist.net/anime/58514", "TV", null))),
+                )
+            )
+        )
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                val related = activity.findViewById<RecyclerView>(R.id.related)
+                waitUntil { related.isVisible && related.adapter!!.itemCount == 2 && related.childCount == 2 }
+                assertTrue(activity.findViewById<View>(R.id.relatedTitle).isVisible)
+
+                val first = related.findViewHolderForAdapterPosition(0) as RelatedAdapter.ViewHolder
+                assertEquals("Prequel", first.binding.relation.text)
+                assertEquals("Season 2", first.binding.name.text)
+                first.binding.root.performClick()
+                val detail = shadowOf(activity).nextStartedActivity
+                assertEquals(AnimeDetailActivity::class.java.name, detail.component?.className)
+                assertEquals(58514, detail.getIntExtra(AnimeDetailActivity.ANIME_ID_EXTRA, -1))
+
+                (related.findViewHolderForAdapterPosition(1) as RelatedAdapter.ViewHolder).binding.root.performClick()
+                assertEquals("https://myanimelist.net/manga/7", shadowOf(activity).nextStartedActivity.dataString)
+            }
+        }
+    }
+
+    @Test
+    fun noRelationsNoSection() {
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                waitUntil { activity.findViewById<ChipGroup>(R.id.stats).childCount > 0 }
+                assertFalse(activity.findViewById<View>(R.id.related).isVisible)
+                assertFalse(activity.findViewById<View>(R.id.relatedTitle).isVisible)
+            }
+        }
+    }
+
+    @Test
+    fun animeThatIsNotCachedIsDownloaded() {
+        api.byId = mapOf(58514 to Fixtures.anime(58514, "Kusuriya no Hitorigoto 2nd Season"))
+        launch(58514).use { scenario ->
+            scenario.onActivity { activity ->
+                val title = activity.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar)
+                waitUntil { title.title == "Kusuriya no Hitorigoto 2nd Season" }
+                assertFalse(activity.findViewById<View>(R.id.loadState).isVisible)
+            }
+        }
+    }
+
+    @Test
+    fun downloadErrorCanBeRetried() {
+        launch(424242).use { scenario ->
+            scenario.onActivity { activity ->
+                val retry = activity.findViewById<View>(R.id.loadRetry)
+                waitUntil { retry.isVisible }
+                assertTrue(activity.findViewById<View>(R.id.loadError).isVisible)
+
+                api.byId = mapOf(424242 to Fixtures.anime(424242, "Back online"))
+                retry.performClick()
+                val title = activity.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar)
+                waitUntil { title.title == "Back online" }
+                assertFalse(activity.findViewById<View>(R.id.loadState).isVisible)
             }
         }
     }

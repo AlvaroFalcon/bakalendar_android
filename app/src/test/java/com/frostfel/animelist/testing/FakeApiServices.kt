@@ -5,12 +5,14 @@ import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.AnimeResponse
 import com.frostfel.animelist.model.Pagination
 import com.frostfel.animelist.model.PaginationItems
+import com.frostfel.animelist.model.RelationsResponse
 import com.frostfel.animelist.model.SeasonResponse
 import java.io.IOException
 
 class FakeApiServices : ApiServices {
     var season: List<Anime> = emptyList()
     var byId: Map<Int, Anime> = emptyMap()
+    var relations: Map<Int, RelationsResponse> = emptyMap()
     var failOnPage: Int? = null
     val requestedPages = mutableListOf<Int>()
 
@@ -24,6 +26,9 @@ class FakeApiServices : ApiServices {
             Pagination(chunks.size, page < chunks.size, PaginationItems(data.size, season.size, limit))
         )
     }
+
+    override suspend fun getAnimeRelations(id: Int): RelationsResponse =
+        relations[id] ?: RelationsResponse(emptyList())
 
     override suspend fun getAnimeById(id: Int): AnimeResponse =
         AnimeResponse(byId[id] ?: throw IOException("offline"))

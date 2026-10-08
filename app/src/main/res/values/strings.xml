@@ -40,6 +40,8 @@
     <string name="detail_no_synopsis">No synopsis yet.</string>
     <string name="detail_read_more">Read more</string>
     <string name="detail_read_less">Show less</string>
+    <string name="detail_related">Related</string>
+    <string name="detail_load_error">Couldn\'t load this anime. Check your connection and try again.</string>
     <string name="detail_information">Information</string>
     <string name="detail_open_mal">View on MyAnimeList</string>
     <string name="detail_add_favorite">Add to favorites</string>

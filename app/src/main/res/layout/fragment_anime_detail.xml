@@ -236,6 +236,27 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/relatedTitle"
+                style="@style/DetailSectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_related"
+                android:visibility="gone" />
+
+            <!-- Bleeds to the screen edges; the padding keeps the first card aligned. -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/related"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="-20dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <TextView
                 style="@style/DetailSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -259,6 +280,40 @@
                 app:iconGravity="textStart" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Shown while an anime that is not cached is downloaded, or if that fails. -->
+    <LinearLayout
+        android:id="@+id/loadState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loadProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <TextView
+            android:id="@+id/loadError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/detail_load_error"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loadRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/retry" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/favoriteFab"

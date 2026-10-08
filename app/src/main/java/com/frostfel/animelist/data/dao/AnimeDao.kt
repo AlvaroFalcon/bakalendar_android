@@ -35,6 +35,9 @@ interface AnimeDao {
     )
     fun calendarFlow(): Flow<List<AnimeWithPreferences>>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM anime WHERE malId = :malId)")
+    suspend fun exists(malId: Int): Boolean
+
     @Query("SELECT COUNT(*) FROM anime WHERE page > 0")
     suspend fun countSeason(): Int
 

@@ -1,4 +1,6 @@
 package com.frostfel.animelist.views.anime_detail
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -8,7 +10,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
 import com.frostfel.animelist.R
 import com.frostfel.animelist.databinding.ActivityAnimeDetailBinding
-import com.frostfel.animelist.model.AnimeWithPreferences
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,9 +22,7 @@ class AnimeDetailActivity : AppCompatActivity() {
         setContentView(view)
         hideStatusBar()
         initSwipeToDismiss()
-        val bundle = intent.extras
-        val item = bundle?.getParcelable<AnimeWithPreferences?>(ANIME_EXTRA)
-        startDetail(item)
+        startDetail(intent.getIntExtra(ANIME_ID_EXTRA, NO_ID))
     }
 
 
@@ -61,18 +60,23 @@ class AnimeDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun startDetail(anime: AnimeWithPreferences?) {
-        if(anime == null) {
+    private fun startDetail(malId: Int) {
+        if (malId == NO_ID) {
             finish()
             return
         }
-        val fragment = AnimeDetailFragment.newInstance(anime)
+        // Recreated activities keep their fragment.
+        if (supportFragmentManager.findFragmentById(R.id.container) != null) return
         supportFragmentManager.commit {
-            replace(R.id.container, fragment)
+            replace(R.id.container, AnimeDetailFragment.newInstance(malId))
         }
     }
 
     companion object {
-        const val ANIME_EXTRA = "ANIME_EXTRA"
+        const val ANIME_ID_EXTRA = "ANIME_ID"
+        private const val NO_ID = -1
+
+        fun intent(context: Context, malId: Int): Intent =
+            Intent(context, AnimeDetailActivity::class.java).putExtra(ANIME_ID_EXTRA, malId)
     }
 }
