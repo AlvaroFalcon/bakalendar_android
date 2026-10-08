@@ -1,42 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Simple pill search field: icon, text and clear button. No floating label. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+    android:layout_height="42dp"
+    android:background="@drawable/searchbar_shape"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_search_ic"
+        app:tint="@color/textInputLayoutHint" />
+
+    <EditText
+        android:id="@+id/searchField"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:textColorHint="@color/textInputLayoutHint"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:background="@null"
         android:hint="@string/search_view_placeholder"
-        >
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchField"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/searchbar_shape"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </com.google.android.material.textfield.TextInputLayout>
-
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textColorHint="@color/textInputLayoutHint"
+        android:textSize="15sp" />
 
     <ImageView
         android:id="@+id/clearView"
         android:layout_width="32dp"
-        android:contentDescription="@string/anime_image_content_desc"
         android:layout_height="32dp"
-        android:layout_marginEnd="14dp"
+        android:layout_marginEnd="-8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/search_clear"
         android:scaleType="centerInside"
         android:src="@drawable/ic_clear"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:visibility="gone" />
+</LinearLayout>

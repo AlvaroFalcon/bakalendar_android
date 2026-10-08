@@ -1,14 +1,15 @@
 package com.frostfel.animelist.model
 
-import android.content.Context
 import android.os.Parcelable
-import com.frostfel.animelist.R
 import com.frostfel.animelist.data.DayOfWeek
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
+import java.time.ZonedDateTime
+import java.time.temporal.TemporalAdjusters
+
 @Parcelize
 data class Broadcast(
     @SerializedName("day") val day: String?,
@@ -17,107 +18,20 @@ data class Broadcast(
     @SerializedName("string") val stringValue: String?,
 ) : Parcelable
 
-fun Broadcast.getNextBroadcastString(context: Context): String {
-    val day = DayOfWeek.from(this.day)
-    if (day == DayOfWeek.UNKNOWN || time == null) return stringValue ?: ""
-    val broadcastHour = this.time.split(":")[0].toInt()
-    val broadcastMinute = this.time.split(":")[1].toInt()
-    val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone))
-    val zonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone)).withHour(broadcastHour)
-        .withMinute(broadcastMinute).withSecond(0)
-    val nextBroadcastDate = when {
-        day.value > todayZoned.dayOfWeek.value -> {
-            // broadcast day after today
-            val broadcastDate =
-                zonedDateTime.plusDays((day.value - zonedDateTime.dayOfWeek.value).toLong())
-            broadcastDate
-        }
-        day.value == todayZoned.dayOfWeek.value -> {
-            // broadcast the same day
-            val broadcastDate = if (broadcastHour < todayZoned.hour) {
-                // this already happened
-                zonedDateTime.plusDays(7L)
-            } else {
-                // airing today
-                zonedDateTime
-            }
-            broadcastDate
-        }
-        else -> {
-            // broadcast already happened, must be next week
-            val daysForNextEpisode = 7 - (zonedDateTime.dayOfWeek.value - day.value)
-            val broadcastDate = zonedDateTime.plusDays(daysForNextEpisode.toLong())
-            broadcastDate
-        }
-    }
-    val daysLeftForNextEpisode = ChronoUnit.DAYS.between(todayZoned, nextBroadcastDate)
-    val hoursLeftForNewEpisode = ChronoUnit.HOURS.between(todayZoned, nextBroadcastDate) % 24
-    val minutesLeftForNewEpisode = ChronoUnit.MINUTES.between(todayZoned, nextBroadcastDate) % 60
-    val airingMinutesLeft = context.resources.getQuantityString(
-        R.plurals.airing_minutes,
-        minutesLeftForNewEpisode.toInt(),
-        minutesLeftForNewEpisode.toInt()
-    )
-    val airingHoursLeft = context.resources.getQuantityString(
-        R.plurals.airing_hours,
-        hoursLeftForNewEpisode.toInt(),
-        hoursLeftForNewEpisode.toInt()
-    )
-    val airingDaysLeft = context.resources.getQuantityString(
-        R.plurals.airing_days,
-        daysLeftForNextEpisode.toInt(),
-        daysLeftForNextEpisode.toInt()
-    )
-
-    return if (daysLeftForNextEpisode == 0L) {
-        if (hoursLeftForNewEpisode == 0L) {
-            context.getString(R.string.one_value_airing, airingMinutesLeft)
-        } else {
-            context.getString(R.string.two_values_airing, airingHoursLeft, airingMinutesLeft)
-        }
-    } else {
-        context.getString(R.string.two_values_airing, airingDaysLeft, airingHoursLeft)
-    }
+/**
+ * First weekly slot at or after [now] (and not before [notBefore], in the broadcast's own
+ * timezone), or null when the schedule is unknown.
+ */
+fun Broadcast.nextAiringAfter(now: ZonedDateTime, notBefore: LocalDate? = null): ZonedDateTime? {
+    val dayOfWeek = DayOfWeek.from(day).toJavaDayOfWeek() ?: return null
+    val localTime = time?.let { runCatching { LocalTime.parse(it) }.getOrNull() } ?: return null
+    val zone = broadcastZone()
+    val nowInZone = now.withZoneSameInstant(zone)
+    val from = maxOf(nowInZone.toLocalDate(), notBefore ?: LocalDate.MIN)
+    val candidate = from.with(TemporalAdjusters.nextOrSame(dayOfWeek)).atTime(localTime).atZone(zone)
+    return if (candidate.isBefore(nowInZone)) candidate.plusWeeks(1) else candidate
 }
 
-fun Broadcast.isAiringToday(): Boolean {
-    val day = DayOfWeek.from(this.day)
-    if (day == DayOfWeek.UNKNOWN || time == null) return false
-    val broadcastHour = this.time.split(":")[0].toInt()
-    val broadcastMinute = this.time.split(":")[1].toInt()
-    val todayZoned = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone))
-    val zonedDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneId.of(this.timeZone)).withHour(broadcastHour)
-        .withMinute(broadcastMinute).withSecond(0)
-    val nextBroadcastDate = when {
-        day.value > todayZoned.dayOfWeek.value -> {
-            // broadcast day after today
-            val broadcastDate =
-                zonedDateTime.plusDays((day.value - zonedDateTime.dayOfWeek.value).toLong())
-            broadcastDate
-        }
-        day.value == todayZoned.dayOfWeek.value -> {
-            // broadcast the same day
-            val broadcastDate = if (broadcastHour < todayZoned.hour) {
-                // this already happened
-                zonedDateTime.plusDays(7L)
-            } else {
-                // airing today
-                zonedDateTime
-            }
-            broadcastDate
-        }
-        else -> {
-            // broadcast already happened, must be next week
-            val daysForNextEpisode = 7 - (zonedDateTime.dayOfWeek.value - day.value)
-            val broadcastDate = zonedDateTime.plusDays(daysForNextEpisode.toLong())
-            broadcastDate
-        }
-    }
-    val daysLeftForNextEpisode = ChronoUnit.DAYS.between(todayZoned, nextBroadcastDate)
-    val hoursLeftForNewEpisode = ChronoUnit.HOURS.between(todayZoned, nextBroadcastDate) % 24
-    return daysLeftForNextEpisode == 0L && hoursLeftForNewEpisode < 14
-}
+// MAL broadcasts are always JST; the API returns a null timezone when the schedule is unknown.
+private fun Broadcast.broadcastZone(): ZoneId =
+    timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneId.of("Asia/Tokyo")

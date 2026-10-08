@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".Application"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
@@ -21,9 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.anime_detail.AnimeDetailActivity" />
-
-        <receiver android:name=".broadcast.AnimeAlertAlarm" />
+        <activity
+            android:name=".views.anime_detail.AnimeDetailActivity"
+            android:theme="@style/Theme.Bakalendar.Detail" />
+        <activity android:name=".views.calendar.CalendarActivity" />
     </application>
 
 </manifest>

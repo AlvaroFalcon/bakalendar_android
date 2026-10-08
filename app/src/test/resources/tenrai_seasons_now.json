@@ -1,0 +1,542 @@
+{
+  "data": [
+    {
+      "mal_id": 61987,
+      "url": "https://myanimelist.net/anime/61987/Kusuriya_no_Hitorigoto_3rd_Season",
+      "images": {
+        "jpg": {
+          "image_url": "https://cdn.myanimelist.net/images/anime/1028/160277.jpg",
+          "small_image_url": "https://cdn.myanimelist.net/images/anime/1028/160277t.jpg",
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1028/160277l.jpg"
+        },
+        "webp": {
+          "image_url": "https://cdn.myanimelist.net/images/anime/1028/160277.webp",
+          "small_image_url": "https://cdn.myanimelist.net/images/anime/1028/160277t.webp",
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1028/160277l.webp"
+        }
+      },
+      "trailer": {
+        "youtube_id": "YvNvvUeCztE",
+        "url": "https://www.youtube.com/watch?v=YvNvvUeCztE",
+        "embed_url": "https://www.youtube-nocookie.com/embed/YvNvvUeCztE?enablejsapi=1&wmode=opaque&autoplay=1",
+        "images": {
+          "image_url": "https://img.youtube.com/vi/YvNvvUeCztE/default.jpg",
+          "small_image_url": "https://img.youtube.com/vi/YvNvvUeCztE/sddefault.jpg",
+          "medium_image_url": "https://img.youtube.com/vi/YvNvvUeCztE/mqdefault.jpg",
+          "large_image_url": "https://img.youtube.com/vi/YvNvvUeCztE/hqdefault.jpg",
+          "maximum_image_url": "https://img.youtube.com/vi/YvNvvUeCztE/maxresdefault.jpg"
+        },
+        "title": "【2026.10.2 ON AIR】TVアニメ『薬屋のひとりごと』第3期 第2弾PV／EDテーマ：Eve「AIYOU」",
+        "views": 3960643,
+        "likes": 56867,
+        "dislikes": 84,
+        "comment_count": 1301,
+        "published_at": "2026-09-25T10:59:09.000Z",
+        "duration": "PT1M39S",
+        "privacy_status": "public",
+        "region_restriction": null,
+        "embeddable": true
+      },
+      "approved": true,
+      "titles": [
+        {
+          "type": "Default",
+          "title": "Kusuriya no Hitorigoto 3rd Season"
+        },
+        {
+          "type": "Japanese",
+          "title": "薬屋のひとりごと 第3期"
+        },
+        {
+          "type": "English",
+          "title": "The Apothecary Diaries Season 3"
+        },
+        {
+          "type": "Synonym",
+          "title": "The Pharmacist's Monologue"
+        },
+        {
+          "type": "Synonym",
+          "title": "Drugstore Soliloquy"
+        }
+      ],
+      "title": "Kusuriya no Hitorigoto 3rd Season",
+      "title_english": "The Apothecary Diaries Season 3",
+      "title_japanese": "薬屋のひとりごと 第3期",
+      "title_synonyms": [
+        "The Pharmacist's Monologue",
+        "Drugstore Soliloquy"
+      ],
+      "type": "TV",
+      "source": "Light novel",
+      "episodes": 12,
+      "status": "Currently Airing",
+      "airing": true,
+      "aired": {
+        "from": "2026-10-02T00:00:00+00:00",
+        "to": null,
+        "prop": {
+          "from": {
+            "day": 2,
+            "month": 10,
+            "year": 2026
+          },
+          "to": {
+            "day": null,
+            "month": null,
+            "year": null
+          }
+        },
+        "string": "Oct 2, 2026 to ?"
+      },
+      "duration": "24 min per ep",
+      "rating": "PG-13 - Teens 13 or older",
+      "score": 8.65,
+      "scored_by": 6650,
+      "rank": 90,
+      "popularity": 1552,
+      "members": 182476,
+      "favorites": 910,
+      "synopsis": "In the aftermath of the Shi Clan's rebellion, things have finally settled down, and Maomao has returned to her old life as a pharmacist in the pleasure district. One day, triggered by a breakfast served at the Verdigris House, Maomao senses an anomaly and begins investigating its true nature. Meanwhile, Jinshi, who has revealed his true identity as the Imperial brother and begun to face his heavy responsibilities, is deeply troubled by the final message left by Loulan: a warning of an impending \"disaster that will strike the nation.\" To make matters worse, rumors of a mysterious shrine maiden who deceives the people begin to spread, casting a dark shadow over the country of Li once again. From the depths of the inner court to the city streets, and across foreign borders—the world grows wider, and the stakes even higher for Maomao and Jinshi.\n\n(Source: Crunchyroll)",
+      "background": "Kusuriya no Hitorigoto 3rd Season aired on Nippon TV's Friday Anime Night block.",
+      "season": "fall",
+      "year": 2026,
+      "broadcast": {
+        "day": "Fridays",
+        "time": "23:00",
+        "timezone": "Asia/Tokyo",
+        "string": "Fridays at 23:00 (JST)"
+      },
+      "producers": [
+        {
+          "mal_id": 53,
+          "type": "anime",
+          "name": "Dentsu",
+          "url": "https://myanimelist.net/anime/producer/53/Dentsu"
+        },
+        {
+          "mal_id": 58,
+          "type": "anime",
+          "name": "Square Enix",
+          "url": "https://myanimelist.net/anime/producer/58/Square_Enix"
+        },
+        {
+          "mal_id": 1003,
+          "type": "anime",
+          "name": "Nippon Television Network",
+          "url": "https://myanimelist.net/anime/producer/1003/Nippon_Television_Network"
+        },
+        {
+          "mal_id": 1294,
+          "type": "anime",
+          "name": "Sound Team Don Juan",
+          "url": "https://myanimelist.net/anime/producer/1294/Sound_Team_Don_Juan"
+        },
+        {
+          "mal_id": 1430,
+          "type": "anime",
+          "name": "Shogakukan",
+          "url": "https://myanimelist.net/anime/producer/1430/Shogakukan"
+        },
+        {
+          "mal_id": 2844,
+          "type": "anime",
+          "name": "Imagica Infos",
+          "url": "https://myanimelist.net/anime/producer/2844/Imagica_Infos"
+        }
+      ],
+      "licensors": [],
+      "studios": [
+        {
+          "mal_id": 28,
+          "type": "anime",
+          "name": "OLM",
+          "url": "https://myanimelist.net/anime/producer/28/OLM"
+        }
+      ],
+      "genres": [
+        {
+          "mal_id": 8,
+          "type": "anime",
+          "name": "Drama",
+          "url": "https://myanimelist.net/anime/genre/8/Drama"
+        },
+        {
+          "mal_id": 7,
+          "type": "anime",
+          "name": "Mystery",
+          "url": "https://myanimelist.net/anime/genre/7/Mystery"
+        }
+      ],
+      "explicit_genres": [],
+      "themes": [
+        {
+          "mal_id": 13,
+          "type": "anime",
+          "name": "Historical",
+          "url": "https://myanimelist.net/anime/genre/13/Historical"
+        },
+        {
+          "mal_id": 67,
+          "type": "anime",
+          "name": "Medical",
+          "url": "https://myanimelist.net/anime/genre/67/Medical"
+        }
+      ],
+      "demographics": []
+    },
+    {
+      "mal_id": 61469,
+      "url": "https://myanimelist.net/anime/61469/Steel_Ball_Run__JoJo_no_Kimyou_na_Bouken",
+      "images": {
+        "jpg": {
+          "image_url": "https://cdn.myanimelist.net/images/anime/1065/158884.jpg",
+          "small_image_url": "https://cdn.myanimelist.net/images/anime/1065/158884t.jpg",
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1065/158884l.jpg"
+        },
+        "webp": {
+          "image_url": "https://cdn.myanimelist.net/images/anime/1065/158884.webp",
+          "small_image_url": "https://cdn.myanimelist.net/images/anime/1065/158884t.webp",
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1065/158884l.webp"
+        }
+      },
+      "trailer": {
+        "youtube_id": "jXtG_lcR9P4",
+        "url": "https://www.youtube.com/watch?v=jXtG_lcR9P4",
+        "embed_url": "https://www.youtube-nocookie.com/embed/jXtG_lcR9P4?enablejsapi=1&wmode=opaque&autoplay=1",
+        "images": {
+          "image_url": "https://img.youtube.com/vi/jXtG_lcR9P4/default.jpg",
+          "small_image_url": "https://img.youtube.com/vi/jXtG_lcR9P4/sddefault.jpg",
+          "medium_image_url": "https://img.youtube.com/vi/jXtG_lcR9P4/mqdefault.jpg",
+          "large_image_url": "https://img.youtube.com/vi/jXtG_lcR9P4/hqdefault.jpg",
+          "maximum_image_url": "https://img.youtube.com/vi/jXtG_lcR9P4/maxresdefault.jpg"
+        },
+        "title": "PV 第2弾　アニメ『スティール・ボール・ラン ジョジョの奇妙な冒険』｜2nd Trailer !!　\"STEEL BALL RUN JoJo’s Bizarre Adventure\"",
+        "views": 1691125,
+        "likes": 61120,
+        "dislikes": 164,
+        "comment_count": 2363,
+        "published_at": "2026-07-03T23:00:13.000Z",
+        "duration": "PT1M44S",
+        "privacy_status": "public",
+        "region_restriction": null,
+        "embeddable": true
+      },
+      "approved": true,
+      "titles": [
+        {
+          "type": "Default",
+          "title": "Steel Ball Run: JoJo no Kimyou na Bouken"
+        },
+        {
+          "type": "Japanese",
+          "title": "スティール・ボール・ラン ジョジョの奇妙な冒険"
+        },
+        {
+          "type": "English",
+          "title": "Steel Ball Run: JoJo's Bizarre Adventure"
+        },
+        {
+          "type": "Synonym",
+          "title": "JoJo's Bizarre Adventure Part 7: Steel Ball Run"
+        },
+        {
+          "type": "Synonym",
+          "title": "JoJo no Kimyou na Bouken Part 7: Steel Ball Run"
+        },
+        {
+          "type": "Synonym",
+          "title": "SBR"
+        }
+      ],
+      "title": "Steel Ball Run: JoJo no Kimyou na Bouken",
+      "title_english": "Steel Ball Run: JoJo's Bizarre Adventure",
+      "title_japanese": "スティール・ボール・ラン ジョジョの奇妙な冒険",
+      "title_synonyms": [
+        "JoJo's Bizarre Adventure Part 7: Steel Ball Run",
+        "JoJo no Kimyou na Bouken Part 7: Steel Ball Run",
+        "SBR"
+      ],
+      "type": "ONA",
+      "source": "Manga",
+      "episodes": null,
+      "status": "Currently Airing",
+      "airing": true,
+      "aired": {
+        "from": "2026-03-19T00:00:00+00:00",
+        "to": null,
+        "prop": {
+          "from": {
+            "day": 19,
+            "month": 3,
+            "year": 2026
+          },
+          "to": {
+            "day": null,
+            "month": null,
+            "year": null
+          }
+        },
+        "string": "Mar 19, 2026 to ?"
+      },
+      "duration": "27 min",
+      "rating": "R - 17+ (violence & profanity)",
+      "score": 9.05,
+      "scored_by": 109075,
+      "rank": 9,
+      "popularity": 1200,
+      "members": 242945,
+      "favorites": 8359,
+      "synopsis": "In the American Old West, the world's greatest race is about to begin. Thousands line up in San Diego to travel over six thousand kilometers for a chance to win the grand prize of fifty million dollars. With the era of the horse reaching its end, contestants are allowed to use any kind of vehicle they wish. Competitors will have to endure grueling conditions, traveling up to a hundred kilometers a day through uncharted wastelands. The Steel Ball Run is truly a one-of-a-kind event.\n\nThe youthful Johnny Joestar, a crippled former horse racer, has come to San Diego to watch the start of the race. There he encounters Gyro Zeppeli, a racer with two steel balls at his waist instead of a gun. Johnny witnesses Gyro using one of his steel balls to unleash a fantastical power, compelling a man to fire his gun at himself during a duel. In the midst of the action, Johnny happens to touch the steel ball and feels a power surging through his legs, allowing him to stand up for the first time in two years. Vowing to find the secret of the steel balls, Johnny decides to compete in the race, and so begins his bizarre adventure across America on the Steel Ball Run.\n\n[Written by MAL Rewrite]",
+      "background": null,
+      "season": "winter",
+      "year": 2026,
+      "broadcast": {
+        "day": null,
+        "time": null,
+        "timezone": null,
+        "string": null
+      },
+      "producers": [
+        {
+          "mal_id": 415,
+          "type": "anime",
+          "name": "Warner Bros. Japan",
+          "url": "https://myanimelist.net/anime/producer/415/Warner_Bros_Japan"
+        },
+        {
+          "mal_id": 719,
+          "type": "anime",
+          "name": "Studio Mausu",
+          "url": "https://myanimelist.net/anime/producer/719/Studio_Mausu"
+        },
+        {
+          "mal_id": 1783,
+          "type": "anime",
+          "name": "ONEMUSIC",
+          "url": "https://myanimelist.net/anime/producer/1783/ONEMUSIC"
+        }
+      ],
+      "licensors": [],
+      "studios": [
+        {
+          "mal_id": 287,
+          "type": "anime",
+          "name": "David Production",
+          "url": "https://myanimelist.net/anime/producer/287/David_Production"
+        }
+      ],
+      "genres": [
+        {
+          "mal_id": 1,
+          "type": "anime",
+          "name": "Action",
+          "url": "https://myanimelist.net/anime/genre/1/Action"
+        },
+        {
+          "mal_id": 2,
+          "type": "anime",
+          "name": "Adventure",
+          "url": "https://myanimelist.net/anime/genre/2/Adventure"
+        },
+        {
+          "mal_id": 7,
+          "type": "anime",
+          "name": "Mystery",
+          "url": "https://myanimelist.net/anime/genre/7/Mystery"
+        },
+        {
+          "mal_id": 37,
+          "type": "anime",
+          "name": "Supernatural",
+          "url": "https://myanimelist.net/anime/genre/37/Supernatural"
+        }
+      ],
+      "explicit_genres": [],
+      "themes": [
+        {
+          "mal_id": 13,
+          "type": "anime",
+          "name": "Historical",
+          "url": "https://myanimelist.net/anime/genre/13/Historical"
+        },
+        {
+          "mal_id": 3,
+          "type": "anime",
+          "name": "Racing",
+          "url": "https://myanimelist.net/anime/genre/3/Racing"
+        }
+      ],
+      "demographics": [
+        {
+          "mal_id": 42,
+          "type": "anime",
+          "name": "Seinen",
+          "url": "https://myanimelist.net/anime/genre/42/Seinen"
+        },
+        {
+          "mal_id": 27,
+          "type": "anime",
+          "name": "Shounen",
+          "url": "https://myanimelist.net/anime/genre/27/Shounen"
+        }
+      ]
+    },
+    {
+      "mal_id": 63713,
+      "url": "https://myanimelist.net/anime/63713/Junket_Bank",
+      "images": {
+        "jpg": {
+          "image_url": "https://cdn.myanimelist.net/images/anime/1189/156034.jpg",
+          "small_image_url": "https://cdn.myanimelist.net/images/anime/1189/156034t.jpg",
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1189/156034l.jpg"
+        },
+        "webp": {
+          "image_url": "https://cdn.myanimelist.net/images/anime/1189/156034.webp",
+          "small_image_url": "https://cdn.myanimelist.net/images/anime/1189/156034t.webp",
+          "large_image_url": "https://cdn.myanimelist.net/images/anime/1189/156034l.webp"
+        }
+      },
+      "trailer": {
+        "youtube_id": null,
+        "url": null,
+        "embed_url": null,
+        "images": {
+          "image_url": null,
+          "small_image_url": null,
+          "medium_image_url": null,
+          "large_image_url": null,
+          "maximum_image_url": null
+        },
+        "title": null,
+        "views": null,
+        "likes": null,
+        "dislikes": null,
+        "comment_count": null,
+        "published_at": null,
+        "duration": null,
+        "privacy_status": null,
+        "region_restriction": null,
+        "embeddable": null
+      },
+      "approved": true,
+      "titles": [
+        {
+          "type": "Default",
+          "title": "Junket Bank"
+        },
+        {
+          "type": "Japanese",
+          "title": "ジャンケットバンク"
+        }
+      ],
+      "title": "Junket Bank",
+      "title_english": null,
+      "title_japanese": "ジャンケットバンク",
+      "title_synonyms": [],
+      "type": "TV",
+      "source": "Manga",
+      "episodes": null,
+      "status": "Not yet aired",
+      "airing": false,
+      "aired": {
+        "from": null,
+        "to": null,
+        "prop": {
+          "from": {
+            "day": null,
+            "month": null,
+            "year": null
+          },
+          "to": {
+            "day": null,
+            "month": null,
+            "year": null
+          }
+        },
+        "string": null
+      },
+      "duration": "Unknown",
+      "rating": "None",
+      "score": null,
+      "scored_by": 0,
+      "rank": null,
+      "popularity": 10695,
+      "members": 3739,
+      "favorites": 5,
+      "synopsis": "Karasu Bank is one of Japan's leading banks, boasting the third-highest operating profits in the country. Akira Mitarai is a young employee in his second year at the bank's central branch. His exceptional math skills allow him to instantly spot accounting errors but also make his day-to-day life incredibly boring.\n\nOne day, Akira is suddenly transferred to the Special Operations Department's \"Appraisal Unit,\" which he is told is a key department within the bank. Suspicious of his transfer and the unfamiliar department, he is told by his new boss that the bank actually operates a massive underground casino, and that the Appraisal Unit is the department responsible for managing this gambling as well as the gamblers who participate in it. But these gamblers are putting more than just their money on the line, with their very lives serving as collateral to play! Higher risk means higher rewards, but at the top level losing is a death sentence.\n\nOverwhelmed and confused by the strange state of the bank's secret casino, Mitarai meets a mysterious, genius gambler, Shin Mafutsu. Enraptured by Shin's ability to see through his opponents' cheating and emerge victorious, Akira decides to enter the world of life-or-death gambling as Shin's bank representative.\n\n(Source: MAL News)",
+      "background": null,
+      "season": null,
+      "year": null,
+      "broadcast": {
+        "day": null,
+        "time": null,
+        "timezone": null,
+        "string": null
+      },
+      "producers": [],
+      "licensors": [],
+      "studios": [
+        {
+          "mal_id": 3187,
+          "type": "anime",
+          "name": "Cue",
+          "url": "https://myanimelist.net/anime/producer/3187/Cue"
+        }
+      ],
+      "genres": [
+        {
+          "mal_id": 41,
+          "type": "anime",
+          "name": "Suspense",
+          "url": "https://myanimelist.net/anime/genre/41/Suspense"
+        }
+      ],
+      "explicit_genres": [],
+      "themes": [
+        {
+          "mal_id": 50,
+          "type": "anime",
+          "name": "Adult Cast",
+          "url": "https://myanimelist.net/anime/genre/50/Adult_Cast"
+        },
+        {
+          "mal_id": 59,
+          "type": "anime",
+          "name": "High Stakes Game",
+          "url": "https://myanimelist.net/anime/genre/59/High_Stakes_Game"
+        },
+        {
+          "mal_id": 40,
+          "type": "anime",
+          "name": "Psychological",
+          "url": "https://myanimelist.net/anime/genre/40/Psychological"
+        },
+        {
+          "mal_id": 11,
+          "type": "anime",
+          "name": "Strategy Game",
+          "url": "https://myanimelist.net/anime/genre/11/Strategy_Game"
+        }
+      ],
+      "demographics": [
+        {
+          "mal_id": 42,
+          "type": "anime",
+          "name": "Seinen",
+          "url": "https://myanimelist.net/anime/genre/42/Seinen"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "last_visible_page": 5,
+    "has_next_page": true,
+    "current_page": 1,
+    "items": {
+      "count": 25,
+      "total": 120,
+      "per_page": 25
+    }
+  }
+}

@@ -14,15 +14,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: set up JDK 11
-        uses: actions/setup-java@v2
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: 11
-          distribution: 'adopt'
+          java-version: 17
+          distribution: 'temurin'
       - name: Cache Gradle dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
@@ -40,28 +40,16 @@ jobs:
 
       - name: Get short SHA
         id: short_sha
-        run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
+        run: echo "sha=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         with:
           tag_name: release-${{ steps.short_sha.outputs.sha }}
-          release_name: Release ${{ steps.short_sha.outputs.sha }}
+          name: Release ${{ steps.short_sha.outputs.sha }}
+          files: ./app/build/outputs/bundle/release/app-release.aab
           draft: false
           prerelease: false
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app/build/outputs/bundle/release/app-release.aab
-          asset_name: app-release.aab
-          asset_content_type: application/vnd.android.package-archive
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'

@@ -1,6 +1,8 @@
 package com.frostfel.animelist.injection
 
+import com.frostfel.animelist.BuildConfig
 import com.frostfel.animelist.data.ApiServices
+import com.frostfel.animelist.data.interceptors.RateLimitRetryInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,13 +16,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
-    private const val BASE_URL = "https://api.jikan.moe/v4/"
+    private const val USER_AGENT = "Bakalendar-Android/${BuildConfig.VERSION_NAME}"
 
     @Singleton
     @Provides
     fun providesHttpLoggingInterceptor() = HttpLoggingInterceptor()
         .apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
 
     @Singleton
@@ -28,6 +34,14 @@ object ApiModule {
     fun providesOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
         OkHttpClient
             .Builder()
+            .addInterceptor { chain ->
+                chain.proceed(
+                    chain.request().newBuilder()
+                        .header("User-Agent", USER_AGENT)
+                        .build()
+                )
+            }
+            .addInterceptor(RateLimitRetryInterceptor())
             .addInterceptor(httpLoggingInterceptor)
             .build()
 
@@ -35,7 +49,7 @@ object ApiModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.API_BASE_URL)
         .client(okHttpClient)
         .build()
 
