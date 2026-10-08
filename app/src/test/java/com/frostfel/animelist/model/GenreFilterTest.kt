@@ -29,4 +29,17 @@ class GenreFilterTest {
         assertFalse(action.matches("frieren", setOf("Comedy")))
         assertFalse(comedy.matches("", setOf("Fantasy", "Drama")))
     }
+
+    @Test
+    fun sortsByNextEpisodeKeepingPopularityForTies() {
+        val now = java.time.ZonedDateTime.of(2026, 10, 7, 12, 0, 0, 0, java.time.ZoneId.of("Asia/Tokyo")) // Wednesday
+        fun item(id: Int, day: String?) = AnimeWithPreferences(
+            Fixtures.anime(id).copy(broadcast = Broadcast(day, day?.let { "20:00" }, "Asia/Tokyo", null)),
+            null
+        )
+        val items = listOf(item(1, null), item(2, "Fridays"), item(3, "Wednesdays"), item(4, "Fridays"))
+
+        assertEquals(listOf(1, 2, 3, 4), items.sortedBy(SortOrder.POPULARITY, now).map { it.anime.malId })
+        assertEquals(listOf(3, 2, 4, 1), items.sortedBy(SortOrder.NEXT_EPISODE, now).map { it.anime.malId })
+    }
 }

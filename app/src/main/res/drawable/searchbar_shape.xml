@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Pill-shaped, slightly translucent so the orange background shows through. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/white"/>
-    <corners
-        android:radius="5dp" />
+    <solid android:color="@color/search_background" />
+    <corners android:radius="21dp" />
     <padding
-        android:left="10dp"
-        android:top="10dp"
-        android:right="10dp"
-        android:bottom="10dp" />
+        android:left="16dp"
+        android:right="16dp" />
 </shape>

@@ -15,16 +15,36 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="textInputStyle">@style/SearchInputLayoutStyle</item>
     </style>
+    <!-- Translucent so the list shows through while the detail is dragged down to close. -->
+    <style name="Theme.Bakalendar.Detail">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="DetailExpandedTitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DetailCollapsedTitle" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="DetailSectionTitle">
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Searching" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">@color/black</item>
     </style>
 
 
-    <style name="SearchInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="hintTextColor">@color/textInputLayoutHint</item>
-    </style>
 
 
     <style name="AppTabLayout" parent="Widget.Material3.TabLayout">
@@ -45,6 +65,20 @@
         <item name="chipStrokeWidth">0dp</item>
         <item name="rippleColor">@color/tab_unselected_color</item>
         <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Body2</item>
+    </style>
+
+    <!-- Chips on the white filters sheet. -->
+    <style name="SheetFilterChip" parent="GenreFilterChip">
+        <item name="chipBackgroundColor">@color/sheet_chip_background</item>
+        <item name="android:textColor">@color/sheet_chip_text</item>
+    </style>
+
+    <style name="FilterSectionTitle">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:textColor">@color/textInputLayoutHint</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
