@@ -37,6 +37,9 @@ open class SeasonAnimeFragment : Fragment() {
     private var binding: SeasonAnimeFragmentBinding? = null
     private var lastShownError: Throwable? = null
     private var loadStates: CombinedLoadStates? = null
+    private var lastSelectedGenres: Set<String>? = null
+    // Set when the search or genre filter changes; the list jumps to the top once it is updated.
+    private var scrollToTopOnUpdate = false
     private val adapter = AnimeListAdapter({ item ->
         activityViewModel.navigator.navigateToAnimeDetail(item)
     }, {
@@ -66,6 +69,7 @@ open class SeasonAnimeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        lastSelectedGenres = null
     }
 
     private fun initView(binding: SeasonAnimeFragmentBinding) {
@@ -80,6 +84,8 @@ open class SeasonAnimeFragment : Fragment() {
         scope.launch { observeSearch(binding) }
         scope.launch {
             combine(viewModel.genres, viewModel.selectedGenres, ::Pair).collect { (genres, selected) ->
+                if (lastSelectedGenres != null && lastSelectedGenres != selected) scrollToTopOnUpdate = true
+                lastSelectedGenres = selected
                 renderGenres(binding, genres, selected)
             }
         }
@@ -91,7 +97,15 @@ open class SeasonAnimeFragment : Fragment() {
             }
         }
         // Load states do not change when a favourite is removed or a search filters everything out.
-        scope.launch { adapter.onPagesUpdatedFlow.collect { render() } }
+        scope.launch {
+            adapter.onPagesUpdatedFlow.collect {
+                if (scrollToTopOnUpdate) {
+                    scrollToTopOnUpdate = false
+                    binding.recylcerView.scrollToPosition(0)
+                }
+                render()
+            }
+        }
     }
 
     @OptIn(FlowPreview::class)
@@ -100,7 +114,10 @@ open class SeasonAnimeFragment : Fragment() {
             .drop(1)
             .debounce(200L)
             .distinctUntilChanged()
-            .collect { viewModel.setQuery(it) }
+            .collect {
+                scrollToTopOnUpdate = true
+                viewModel.setQuery(it)
+            }
     }
 
     private fun renderGenres(binding: SeasonAnimeFragmentBinding, genres: List<String>, selected: Set<String>) {

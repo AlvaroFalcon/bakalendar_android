@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="22dp"
         android:layout_marginTop="22dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="22dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,7 +40,6 @@
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/genreFilterScroll">
 
@@ -49,7 +48,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingTop="8dp"
             android:paddingBottom="65dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

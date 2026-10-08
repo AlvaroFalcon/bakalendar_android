@@ -2,6 +2,7 @@ package com.frostfel.animelist.views.season_list
 
 import android.content.Context
 import android.os.Looper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -100,6 +101,29 @@ class GenreFilterUiTest {
                 chips.chip("Comedy").performClick()
                 waitUntil { list.adapter!!.itemCount == 3 }
                 assertEquals(false, chips.chip("Comedy").isChecked)
+            }
+        }
+    }
+
+    @Test
+    fun clearingTheFilterGoesBackToTheTop() {
+        runBlocking {
+            db.animeDao().insertAll((10..19).map { Fixtures.anime(it, genres = listOf("Action")).copy(page = it) })
+        }
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                val list = activity.findViewById<RecyclerView>(R.id.recylcerView)
+                val layoutManager = list.layoutManager as LinearLayoutManager
+                val chips = activity.findViewById<ChipGroup>(R.id.genreFilter)
+                waitUntil { list.adapter!!.itemCount == 13 && chips.childCount > 0 }
+
+                chips.chip("Action").performClick()
+                waitUntil { list.adapter!!.itemCount == 11 }
+                list.scrollToPosition(10)
+                waitUntil { layoutManager.findFirstVisibleItemPosition() > 0 }
+
+                chips.chip("Action").performClick()
+                waitUntil { list.adapter!!.itemCount == 13 && layoutManager.findFirstVisibleItemPosition() == 0 }
             }
         }
     }
