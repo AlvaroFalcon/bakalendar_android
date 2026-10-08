@@ -29,4 +29,12 @@ class RelationsTest {
         assertEquals(emptyList<RelatedItem>(), RelationsResponse(null).toRelatedItems())
         assertEquals(emptyList<RelatedItem>(), RelationsResponse(listOf(RelationGroup("Sequel", null))).toRelatedItems())
     }
+
+    @Test
+    fun recommendationsMostVotedFirst() {
+        fun rec(id: Int, votes: Int) = Recommendation(RecommendationEntry(id, "Anime $id", null, null), votes)
+        val items = RecommendationsResponse(listOf(rec(1, 3), rec(2, 31), rec(3, 12))).toRelatedItems(limit = 2)
+        assertEquals(listOf(2, 3), items.map { it.malId })
+        assertEquals("", items.first().relation)
+    }
 }

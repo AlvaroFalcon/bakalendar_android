@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -34,8 +35,10 @@ class RelatedAdapter(
         with(holder.binding) {
             name.text = item.name
             relation.text = item.relation
+            relation.isVisible = item.relation.isNotEmpty()
             relation.backgroundTintList = ColorStateList.valueOf(accent)
             mediaType.text = item.mediaType
+            mediaType.isVisible = !item.mediaType.isNullOrEmpty()
             cover.setImageDrawable(null)
             cover.loadCached(item.imageUrl)
             root.contentDescription = "${item.relation}: ${item.name}"

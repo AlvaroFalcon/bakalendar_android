@@ -12,6 +12,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -26,8 +27,12 @@ import androidx.fragment.app.viewModels
 import androidx.palette.graphics.Palette
 import com.frostfel.animelist.R
 import com.frostfel.animelist.databinding.FragmentAnimeDetailBinding
+import com.frostfel.animelist.databinding.WatchSheetBinding
 import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.AnimeWithPreferences
+import com.frostfel.animelist.model.EpisodeItem
+import com.frostfel.animelist.model.RelatedItem
+import com.frostfel.animelist.model.StreamingLink
 import com.frostfel.animelist.model.TrailerInfo
 import com.frostfel.animelist.model.countdownText
 import com.frostfel.animelist.model.nextEpisodeAt
@@ -35,7 +40,11 @@ import com.frostfel.animelist.model.thumbnailUrl
 import com.frostfel.animelist.model.watchUrl
 import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.views.utils.loadCached
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.time.ZoneId
@@ -59,13 +68,11 @@ class AnimeDetailFragment : Fragment() {
     private lateinit var binding: FragmentAnimeDetailBinding
     private var boundAnimeId: Int? = null
     private var synopsisExpanded = false
-    private val relatedAdapter = RelatedAdapter { item ->
-        if (item.isAnime) {
-            startActivity(AnimeDetailActivity.intent(requireContext(), item.malId))
-        } else {
-            item.url?.let(::openUrl)
-        }
-    }
+    private val relatedAdapter = RelatedAdapter(::openRelated)
+    private val recommendationsAdapter = RelatedAdapter(::openRelated)
+    private val episodesAdapter = EpisodesAdapter { showWhereToWatch(it) }
+    private var streaming: List<StreamingLink> = emptyList()
+    private var animeUrl: String? = null
 
     @ColorInt
     private var accent: Int = 0
@@ -85,6 +92,21 @@ class AnimeDetailFragment : Fragment() {
         binding.readMore.setOnClickListener { toggleSynopsis() }
         binding.loadRetry.setOnClickListener { viewModel.retry() }
         binding.related.adapter = relatedAdapter
+        binding.recommendations.adapter = recommendationsAdapter
+        binding.episodes.adapter = episodesAdapter
+        // The add animation fades rows to full opacity, which would undo the faded upcoming ones.
+        binding.episodes.itemAnimator = null
+        binding.episodesRetry.setOnClickListener { viewModel.loadEpisodes() }
+        binding.detailTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) = showTab(tab.position)
+            override fun onTabUnselected(tab: TabLayout.Tab) = Unit
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
+        })
+        binding.episodes.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 8) binding.favoriteFab.shrink() else if (dy < -8) binding.favoriteFab.extend()
+            }
+        })
         // The favourite button folds into just the star while scrolling down.
         binding.scroll.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY > oldScrollY + 8) binding.favoriteFab.shrink()
@@ -108,6 +130,12 @@ class AnimeDetailFragment : Fragment() {
             binding.related.isVisible = items.isNotEmpty()
             relatedAdapter.submitList(items)
         }
+        viewModel.recommendations.observe(viewLifecycleOwner) { items ->
+            binding.recommendationsTitle.isVisible = items.isNotEmpty()
+            binding.recommendations.isVisible = items.isNotEmpty()
+            recommendationsAdapter.submitList(items)
+        }
+        viewModel.episodes.observe(viewLifecycleOwner, ::renderEpisodes)
     }
 
     /** Only for anime that are not cached yet (e.g. opened from "Related"). */
@@ -127,6 +155,7 @@ class AnimeDetailFragment : Fragment() {
         boundAnimeId = anime.malId
 
         binding.collapsingToolbar.title = anime.title
+        animeUrl = anime.url
         binding.heroImage.loadCached(anime.images.webp.largeImageUrl) { extractAccent() }
         bindStats(anime)
         bindGenres(anime)
@@ -271,6 +300,11 @@ class AnimeDetailFragment : Fragment() {
         binding.malButton.setTextColor(accent)
         binding.malButton.iconTint = accentList
         relatedAdapter.accent = accent
+        episodesAdapter.accent = accent
+        binding.detailTabs.setSelectedTabIndicatorColor(accent)
+        binding.detailTabs.setTabTextColors(
+            ContextCompat.getColor(requireContext(), R.color.textInputLayoutHint), accent
+        )
         binding.malButton.strokeColor = ColorStateList.valueOf(ColorUtils.blendARGB(accent, Color.WHITE, 0.6f))
         // Genres take the accent; the neutral stats stay grey.
         val group = binding.genres
@@ -278,6 +312,91 @@ class AnimeDetailFragment : Fragment() {
             chip.chipBackgroundColor = ColorStateList.valueOf(tint)
             chip.setTextColor(accent)
         }
+    }
+
+    private fun openRelated(item: RelatedItem) {
+        if (item.isAnime) {
+            startActivity(AnimeDetailActivity.intent(requireContext(), item.malId))
+        } else {
+            item.url?.let(::openUrl)
+        }
+    }
+
+    /** Overview and Episodes share the collapsing cover; only one is visible. */
+    private fun showTab(position: Int) {
+        val episodes = position == TAB_EPISODES
+        binding.scroll.isVisible = !episodes
+        binding.episodesPage.isVisible = episodes
+        binding.favoriteFab.extend()
+        if (episodes) viewModel.loadEpisodes()
+    }
+
+    private fun renderEpisodes(state: EpisodesState) {
+        binding.episodesProgress.isVisible = state is EpisodesState.Loading
+        val loaded = state as? EpisodesState.Loaded
+        streaming = loaded?.streaming.orEmpty()
+        episodesAdapter.submitList(loaded?.episodes.orEmpty())
+        val message = when {
+            state is EpisodesState.Error -> R.string.episodes_error
+            loaded != null && loaded.episodes.isEmpty() -> R.string.episodes_empty
+            else -> null
+        }
+        binding.episodesMessage.isVisible = message != null
+        message?.let { binding.episodesMessageText.setText(it) }
+        binding.episodesRetry.isVisible = state is EpisodesState.Error
+    }
+
+    /** Platforms the series is on; the API does not link single episodes or know the region. */
+    private fun showWhereToWatch(episode: EpisodeItem) {
+        val sheet = WatchSheetBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(requireContext())
+        sheet.sheetTitle.text = listOfNotNull(
+            getString(R.string.watch_where_title, episode.number), episode.title
+        ).joinToString(" · ")
+        sheet.note.isVisible = streaming.isNotEmpty()
+        if (streaming.isEmpty()) {
+            sheet.sheetSubtitle.setText(R.string.watch_where_none)
+        }
+        streaming.forEach { link ->
+            sheet.platforms.addView(platformRow(link.name.orEmpty()) {
+                dialog.dismiss()
+                link.url?.let(::openUrl)
+            })
+        }
+        val malUrl = episode.url ?: animeUrl
+        sheet.malLink.isVisible = malUrl != null
+        sheet.malLink.setTextColor(accent)
+        sheet.malLink.setOnClickListener {
+            dialog.dismiss()
+            malUrl?.let(::openUrl)
+        }
+        dialog.setContentView(sheet.root)
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        dialog.show()
+    }
+
+    private fun platformRow(name: String, onClick: () -> Unit) = LinearLayout(requireContext()).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        val horizontal = dp(22f).toInt()
+        val vertical = dp(14f).toInt()
+        setPadding(horizontal, vertical, horizontal, vertical)
+        val ripple = TypedValue()
+        context.theme.resolveAttribute(android.R.attr.selectableItemBackground, ripple, true)
+        setBackgroundResource(ripple.resourceId)
+        setOnClickListener { onClick() }
+        contentDescription = name
+        addView(TextView(context).apply {
+            text = name
+            setTextColor(ContextCompat.getColor(context, R.color.black))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        addView(ImageView(context).apply {
+            setImageResource(R.drawable.ic_open_in_new)
+            imageTintList = ColorStateList.valueOf(accent)
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(20f).toInt(), dp(20f).toInt()))
     }
 
     private fun statChip(text: String, iconRes: Int? = null) = Chip(requireContext()).apply {
@@ -338,6 +457,7 @@ class AnimeDetailFragment : Fragment() {
 
     companion object {
         private const val GENRE_TAG = "genre"
+        private const val TAB_EPISODES = 1
         private val SCORE_STAR_COLOR = "#F5B301".toColorInt()
 
         fun newInstance(malId: Int) =

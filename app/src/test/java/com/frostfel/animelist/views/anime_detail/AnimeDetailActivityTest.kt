@@ -13,7 +13,15 @@ import androidx.test.core.app.ApplicationProvider
 import com.frostfel.animelist.R
 import com.frostfel.animelist.data.storage.AppDatabase
 import com.frostfel.animelist.model.Anime
+import com.frostfel.animelist.model.EpisodeDto
+import com.frostfel.animelist.model.Recommendation
+import com.frostfel.animelist.model.RecommendationEntry
+import com.frostfel.animelist.model.RecommendationsResponse
 import com.frostfel.animelist.model.RelatedEntry
+import com.frostfel.animelist.model.StreamingLink
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
+import org.robolectric.shadows.ShadowDialog
 import com.frostfel.animelist.model.RelationGroup
 import com.frostfel.animelist.model.RelationsResponse
 import androidx.recyclerview.widget.RecyclerView
@@ -268,6 +276,85 @@ class AnimeDetailActivityTest {
                 val title = activity.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar)
                 waitUntil { title.title == "Back online" }
                 assertFalse(activity.findViewById<View>(R.id.loadState).isVisible)
+            }
+        }
+    }
+
+    @Test
+    fun recommendationsCarousel() {
+        api.recommendations = mapOf(
+            withTrailer.malId to RecommendationsResponse(
+                listOf(Recommendation(RecommendationEntry(33352, "Violet Evergarden", null, null), 31))
+            )
+        )
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                val recommendations = activity.findViewById<RecyclerView>(R.id.recommendations)
+                waitUntil { recommendations.isVisible && recommendations.childCount == 1 }
+                val card = recommendations.findViewHolderForAdapterPosition(0) as RelatedAdapter.ViewHolder
+                assertEquals("Violet Evergarden", card.binding.name.text)
+                assertFalse(card.binding.relation.isVisible)
+                card.binding.root.performClick()
+                assertEquals(33352, shadowOf(activity).nextStartedActivity.getIntExtra(AnimeDetailActivity.ANIME_ID_EXTRA, -1))
+            }
+        }
+    }
+
+    @Test
+    fun episodesTabShowsAiredAndUpcomingAndWhereToWatch() {
+        api.episodes = mapOf(
+            withTrailer.malId to listOf(EpisodeDto(1, "Locusts", "2026-10-02T00:00:00+00:00", false, false, "https://mal/ep/1"))
+        )
+        api.streaming = mapOf(
+            withTrailer.malId to listOf(
+                StreamingLink("Crunchyroll", "https://www.crunchyroll.com/"),
+                StreamingLink("Netflix", "https://www.netflix.com/"),
+            )
+        )
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                val tabs = activity.findViewById<TabLayout>(R.id.detailTabs)
+                waitUntil { activity.findViewById<ChipGroup>(R.id.stats).childCount > 0 }
+                tabs.getTabAt(1)!!.select()
+
+                val list = activity.findViewById<RecyclerView>(R.id.episodes)
+                waitUntil { list.adapter!!.itemCount == 12 && list.childCount > 1 }
+                assertFalse(activity.findViewById<View>(R.id.scroll).isVisible)
+
+                val aired = list.findViewHolderForAdapterPosition(0) as EpisodesAdapter.ViewHolder
+                val upcoming = list.findViewHolderForAdapterPosition(1) as EpisodesAdapter.ViewHolder
+                assertEquals("Locusts", aired.binding.title.text)
+                assertEquals(1f, aired.binding.root.alpha)
+                assertEquals(EpisodesAdapter.UPCOMING_ALPHA, upcoming.binding.root.alpha)
+                assertTrue(upcoming.binding.subtitle.text.startsWith("Expected"))
+                assertFalse(upcoming.binding.root.isClickable)
+
+                aired.binding.root.performClick()
+                val sheet = ShadowDialog.getLatestDialog() as BottomSheetDialog
+                waitUntil { sheet.isShowing }
+                val platforms = sheet.findViewById<LinearLayout>(R.id.platforms)!!
+                assertEquals(listOf("Crunchyroll", "Netflix"), (0 until platforms.childCount).map { platforms.getChildAt(it).contentDescription })
+                platforms.getChildAt(1).performClick()
+                assertEquals("https://www.netflix.com/", shadowOf(activity).nextStartedActivity.dataString)
+            }
+        }
+    }
+
+    @Test
+    fun episodesErrorCanBeRetried() {
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                waitUntil { activity.findViewById<ChipGroup>(R.id.stats).childCount > 0 }
+                activity.findViewById<TabLayout>(R.id.detailTabs).getTabAt(1)!!.select()
+                val retry = activity.findViewById<View>(R.id.episodesRetry)
+                waitUntil { retry.isVisible }
+
+                api.episodes = mapOf(withTrailer.malId to emptyList())
+                retry.performClick()
+                val list = activity.findViewById<RecyclerView>(R.id.episodes)
+                // Nothing aired yet: just the expected ones.
+                waitUntil { list.adapter!!.itemCount == 12 }
+                assertFalse(retry.isVisible)
             }
         }
     }

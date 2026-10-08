@@ -37,8 +37,11 @@ class AnimeDetailActivity : AppCompatActivity() {
         }
         binding.dismissLayout.canScrollUp = {
             val scroll = findViewById<View>(R.id.scroll)
+            val episodes = findViewById<View>(R.id.episodes)
             val appBar = findViewById<View>(R.id.appBar)
-            (scroll?.canScrollVertically(-1) == true) || (appBar != null && appBar.top < 0)
+            (scroll?.isShown == true && scroll.canScrollVertically(-1)) ||
+                (episodes?.isShown == true && episodes.canScrollVertically(-1)) ||
+                (appBar != null && appBar.top < 0)
         }
     }
 
