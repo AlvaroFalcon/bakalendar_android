@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Cards or compact list, shared by both tabs and remembered between launches. */
+/** Compact list (default) or cards, shared by both tabs and remembered between launches. */
 @Singleton
 class DisplayModeStore @Inject constructor(@ApplicationContext context: Context) {
     private val prefs = context.getSharedPreferences("display_mode", Context.MODE_PRIVATE)
-    private val _listMode = MutableStateFlow(prefs.getBoolean(LIST_MODE_KEY, false))
+    private val _listMode = MutableStateFlow(prefs.getBoolean(LIST_MODE_KEY, true))
     val listMode: StateFlow<Boolean> = _listMode
 
     fun toggle() {

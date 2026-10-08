@@ -53,14 +53,11 @@ class MainScreenTest {
     }
 
     @Test
-    fun displayModeButtonSwitchesBetweenCardsAndList() {
+    fun listIsTheDefaultAndTheButtonSwitchesToCards() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 val list = activity.findViewById<RecyclerView>(R.id.recylcerView)
                 waitUntil { list.adapter!!.itemCount == 3 && list.childCount > 0 }
-                assertEquals(AnimeListAdapter.TYPE_CARD, list.adapter!!.getItemViewType(0))
-
-                activity.findViewById<ImageButton>(R.id.displayModeButton).performClick()
                 waitUntil { list.findViewHolderForAdapterPosition(0) is AnimeListAdapter.RowViewHolder }
                 // The row shows the countdown to the next episode, bottom right.
                 val row = list.findViewHolderForAdapterPosition(0) as AnimeListAdapter.RowViewHolder
@@ -69,6 +66,9 @@ class MainScreenTest {
 
                 activity.findViewById<ImageButton>(R.id.displayModeButton).performClick()
                 waitUntil { list.findViewHolderForAdapterPosition(0) is AnimeListAdapter.CardViewHolder }
+
+                activity.findViewById<ImageButton>(R.id.displayModeButton).performClick()
+                waitUntil { list.findViewHolderForAdapterPosition(0) is AnimeListAdapter.RowViewHolder }
             }
         }
     }
