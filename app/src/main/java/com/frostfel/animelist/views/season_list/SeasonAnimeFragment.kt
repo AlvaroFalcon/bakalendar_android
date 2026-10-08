@@ -79,9 +79,11 @@ open class SeasonAnimeFragment : Fragment() {
         binding.swipeRefresh.isEnabled = !viewModel.isFav
         binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
         binding.retryButton.setOnClickListener { adapter.refresh() }
+        binding.displayModeButton.setOnClickListener { viewModel.toggleListMode() }
 
         val scope = viewLifecycleOwner.lifecycleScope
         scope.launch { observeSearch(binding) }
+        scope.launch { viewModel.listMode.collect { renderDisplayMode(binding, it) } }
         scope.launch {
             combine(viewModel.genres, viewModel.selectedGenres, ::Pair).collect { (genres, selected) ->
                 if (lastSelectedGenres != null && lastSelectedGenres != selected) scrollToTopOnUpdate = true
@@ -118,6 +120,14 @@ open class SeasonAnimeFragment : Fragment() {
                 scrollToTopOnUpdate = true
                 viewModel.setQuery(it)
             }
+    }
+
+    private fun renderDisplayMode(binding: SeasonAnimeFragmentBinding, listMode: Boolean) {
+        adapter.listMode = listMode
+        // The button shows the mode you switch to.
+        binding.displayModeButton.setImageResource(if (listMode) R.drawable.ic_view_cards else R.drawable.ic_view_list)
+        binding.displayModeButton.contentDescription =
+            getString(if (listMode) R.string.show_as_cards else R.string.show_as_list)
     }
 
     private fun renderGenres(binding: SeasonAnimeFragmentBinding, genres: List<String>, selected: Set<String>) {

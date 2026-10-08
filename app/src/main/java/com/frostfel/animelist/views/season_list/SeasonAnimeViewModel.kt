@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import com.frostfel.animelist.data.repository.AnimeDbRepository
+import com.frostfel.animelist.data.storage.DisplayModeStore
 import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.model.matches
 import com.frostfel.animelist.views.season_list.repository.AnimeRepository
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class SeasonAnimeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     animeRepository: AnimeRepository,
-    private val animeDbRepository: AnimeDbRepository
+    private val animeDbRepository: AnimeDbRepository,
+    private val displayModeStore: DisplayModeStore,
 ) : ViewModel() {
     val isFav: Boolean = savedStateHandle[SeasonAnimeFragment.IS_FAV_PARAM] ?: false
 
@@ -37,6 +39,11 @@ class SeasonAnimeViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
 
     val genres: Flow<List<String>> = animeRepository.getGenres(isFav)
+
+    /** True for the compact list, false for big cards. */
+    val listMode: StateFlow<Boolean> = displayModeStore.listMode
+
+    fun toggleListMode() = displayModeStore.toggle()
 
     val animeList: Flow<PagingData<AnimeWithPreferences>> = combine(
         animeRepository.getAnimeList(isFav).cachedIn(viewModelScope),

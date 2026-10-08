@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.anime_detail.AnimeDetailActivity" />
+        <activity android:name=".views.calendar.CalendarActivity" />
     </application>
 
 </manifest>

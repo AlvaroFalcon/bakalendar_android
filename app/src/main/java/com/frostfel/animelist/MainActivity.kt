@@ -2,17 +2,22 @@ package com.frostfel.animelist
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.frostfel.animelist.databinding.ActivityMainBinding
 import com.frostfel.animelist.model.AnimeWithPreferences
 import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.pager.AnimeListPagerAdapter
 import com.frostfel.animelist.views.anime_detail.AnimeDetailActivity
+import com.frostfel.animelist.views.calendar.CalendarActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -49,11 +54,39 @@ class MainActivity : AppCompatActivity(), AnimeListNavigation {
         TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
+        initDrawer()
+    }
+
+    private fun initDrawer() {
+        val drawer = binding.drawerLayout
+        binding.menuButton.setOnClickListener { drawer.openDrawer(GravityCompat.END) }
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            drawer.closeDrawer(GravityCompat.END)
+            if (item.itemId == R.id.menu_calendar) {
+                startActivity(Intent(this, CalendarActivity::class.java))
+            }
+            item.itemId == R.id.menu_season
+        }
+        // Back closes the drawer first (works with predictive back).
+        val closeDrawerOnBack = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() = drawer.closeDrawer(GravityCompat.END)
+        }
+        onBackPressedDispatcher.addCallback(this, closeDrawerOnBack)
+        drawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerOpened(drawerView: View) {
+                closeDrawerOnBack.isEnabled = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                closeDrawerOnBack.isEnabled = false
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
         hideSystemUI()
+        binding.navigationView.setCheckedItem(R.id.menu_season)
     }
 
     private fun hideSystemUI() {

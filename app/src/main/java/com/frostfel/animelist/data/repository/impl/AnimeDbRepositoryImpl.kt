@@ -21,6 +21,10 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
         return animeDao.seasonFlow()
     }
 
+    override fun calendarFlow(): Flow<List<AnimeWithPreferences>> {
+        return animeDao.calendarFlow()
+    }
+
     override fun getAllFavFlow(): Flow<List<AnimeWithPreferences>> {
         return animeDao.getAllFavFlow()
     }

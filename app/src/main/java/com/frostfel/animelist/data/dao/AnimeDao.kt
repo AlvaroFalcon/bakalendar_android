@@ -25,6 +25,17 @@ interface AnimeDao {
     @Query("SELECT * FROM anime WHERE page > 0")
     fun seasonFlow(): Flow<List<Anime>>
 
+    /** Current season plus favourites from previous seasons. */
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM anime
+        WHERE page > 0
+        OR malId IN (SELECT malId FROM user_anime_preferences WHERE starred = 1)
+        """
+    )
+    fun calendarFlow(): Flow<List<AnimeWithPreferences>>
+
     @Query("SELECT COUNT(*) FROM anime WHERE page > 0")
     suspend fun countSeason(): Int
 

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="14dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="7dp"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:minHeight="136dp">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/anime_image_content_desc"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/air_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/primary_color"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/favoriteButton"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="16:00"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/anime_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/favoriteButton"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/air_time"
+                app:layout_goneMarginTop="10dp"
+                tools:text="Kusuriya no Hitorigoto 3rd Season" />
+
+            <com.frostfel.animelist.views.utils.FavoriteButton
+                android:id="@+id/favoriteButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/favorite_button_background"
+                android:padding="7dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/favorite_button_content_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/genre_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/anime_title" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="10dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/genre_container"
+                app:layout_constraintVertical_bias="0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface AnimeDbRepository {
     fun seasonPagingSource(): PagingSource<Int, AnimeWithPreferences>
     fun seasonFlow(): Flow<List<Anime>>
+    fun calendarFlow(): Flow<List<AnimeWithPreferences>>
     fun getAllFavFlow(): Flow<List<AnimeWithPreferences>>
     suspend fun getAllFav(): List<AnimeWithPreferences>
     suspend fun setStarred(malId: Int, starred: Boolean)
