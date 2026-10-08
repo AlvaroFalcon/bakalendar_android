@@ -14,7 +14,7 @@ class FakeApiServices : ApiServices {
     var failOnPage: Int? = null
     val requestedPages = mutableListOf<Int>()
 
-    override suspend fun getCurrentSeason(page: Int, limit: Int): SeasonResponse {
+    override suspend fun getCurrentSeason(page: Int, limit: Int, continuing: Boolean): SeasonResponse {
         requestedPages += page
         if (page == failOnPage) throw IOException("offline")
         val chunks = season.chunked(limit)

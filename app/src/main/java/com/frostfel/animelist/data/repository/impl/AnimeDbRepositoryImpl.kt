@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.frostfel.animelist.data.dao.AnimeDao
 import com.frostfel.animelist.data.repository.AnimeDbRepository
+import com.frostfel.animelist.model.Anime
 import com.frostfel.animelist.model.AnimePreferences
 import com.frostfel.animelist.model.AnimeWithPreferences
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,10 @@ class AnimeDbRepositoryImpl @Inject constructor(private val animeDao: AnimeDao) 
 
     override fun seasonPagingSource(): PagingSource<Int, AnimeWithPreferences> {
         return animeDao.seasonPagingSource()
+    }
+
+    override fun seasonFlow(): Flow<List<Anime>> {
+        return animeDao.seasonFlow()
     }
 
     override fun getAllFavFlow(): Flow<List<AnimeWithPreferences>> {

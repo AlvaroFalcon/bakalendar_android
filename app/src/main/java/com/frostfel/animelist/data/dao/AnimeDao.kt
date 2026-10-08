@@ -22,6 +22,9 @@ interface AnimeDao {
     @Query("SELECT * FROM anime WHERE page > 0 ORDER BY page")
     fun seasonPagingSource(): PagingSource<Int, AnimeWithPreferences>
 
+    @Query("SELECT * FROM anime WHERE page > 0")
+    fun seasonFlow(): Flow<List<Anime>>
+
     @Query("SELECT COUNT(*) FROM anime WHERE page > 0")
     suspend fun countSeason(): Int
 

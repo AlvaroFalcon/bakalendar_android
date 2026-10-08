@@ -19,9 +19,11 @@ import com.frostfel.animelist.databinding.SeasonAnimeFragmentBinding
 import com.frostfel.animelist.notifications.NotificationPermissionRequest
 import com.frostfel.animelist.utils.getQueryFlow
 import com.frostfel.animelist.views.season_list.adapter.AnimeListAdapter
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -35,6 +37,9 @@ open class SeasonAnimeFragment : Fragment() {
     private var binding: SeasonAnimeFragmentBinding? = null
     private var lastShownError: Throwable? = null
     private var loadStates: CombinedLoadStates? = null
+    private var lastSelectedGenres: Set<String>? = null
+    // Set when the search or genre filter changes; the list jumps to the top once it is updated.
+    private var scrollToTopOnUpdate = false
     private val adapter = AnimeListAdapter({ item ->
         activityViewModel.navigator.navigateToAnimeDetail(item)
     }, {
@@ -64,6 +69,7 @@ open class SeasonAnimeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        lastSelectedGenres = null
     }
 
     private fun initView(binding: SeasonAnimeFragmentBinding) {
@@ -76,6 +82,13 @@ open class SeasonAnimeFragment : Fragment() {
 
         val scope = viewLifecycleOwner.lifecycleScope
         scope.launch { observeSearch(binding) }
+        scope.launch {
+            combine(viewModel.genres, viewModel.selectedGenres, ::Pair).collect { (genres, selected) ->
+                if (lastSelectedGenres != null && lastSelectedGenres != selected) scrollToTopOnUpdate = true
+                lastSelectedGenres = selected
+                renderGenres(binding, genres, selected)
+            }
+        }
         scope.launch { viewModel.animeList.collectLatest { adapter.submitData(it) } }
         scope.launch {
             adapter.loadStateFlow.collect {
@@ -84,7 +97,15 @@ open class SeasonAnimeFragment : Fragment() {
             }
         }
         // Load states do not change when a favourite is removed or a search filters everything out.
-        scope.launch { adapter.onPagesUpdatedFlow.collect { render() } }
+        scope.launch {
+            adapter.onPagesUpdatedFlow.collect {
+                if (scrollToTopOnUpdate) {
+                    scrollToTopOnUpdate = false
+                    binding.recylcerView.scrollToPosition(0)
+                }
+                render()
+            }
+        }
     }
 
     @OptIn(FlowPreview::class)
@@ -93,7 +114,31 @@ open class SeasonAnimeFragment : Fragment() {
             .drop(1)
             .debounce(200L)
             .distinctUntilChanged()
-            .collect { viewModel.setQuery(it) }
+            .collect {
+                scrollToTopOnUpdate = true
+                viewModel.setQuery(it)
+            }
+    }
+
+    private fun renderGenres(binding: SeasonAnimeFragmentBinding, genres: List<String>, selected: Set<String>) {
+        // Keep selected genres visible even if they are no longer in the list.
+        val names = selected.filter { it !in genres }.sorted() + genres
+        binding.genreFilterScroll.isVisible = names.isNotEmpty()
+        val group = binding.genreFilter
+        val current = (0 until group.childCount).map { (group.getChildAt(it) as Chip).text.toString() }
+        if (current != names) {
+            group.removeAllViews()
+            names.forEach { name ->
+                val chip = layoutInflater.inflate(R.layout.genre_filter_chip, group, false) as Chip
+                chip.text = name
+                chip.setOnClickListener { viewModel.onGenreTap(name) }
+                group.addView(chip)
+            }
+        }
+        (0 until group.childCount).forEach {
+            val chip = group.getChildAt(it) as Chip
+            chip.isChecked = chip.text.toString() in selected
+        }
     }
 
     private fun render() {
@@ -111,7 +156,7 @@ open class SeasonAnimeFragment : Fragment() {
         val message = when {
             !isEmpty || isRemoteLoading || isLocalLoading -> null
             remoteError != null -> R.string.season_load_error
-            binding.searchView.getQuery().isNotBlank() -> R.string.search_no_results
+            viewModel.hasActiveFilter -> R.string.search_no_results
             viewModel.isFav -> R.string.favorites_empty
             else -> null
         }

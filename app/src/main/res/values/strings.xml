@@ -29,7 +29,7 @@
     <string name="offline_showing_cached">No connection. Showing saved data.</string>
     <string name="retry">Retry</string>
     <string name="favorites_empty">Tap the star on an anime to add it to your favorites.</string>
-    <string name="search_no_results">No anime matches your search.</string>
+    <string name="search_no_results">No anime matches your search or filter.</string>
     <string name="notification_channel_name">Favorite anime airing</string>
     <string name="notification_channel_description">Daily reminder of your favorite anime airing in the next 24 hours</string>
     <string name="notification_line">%1$s · %2$s</string>
