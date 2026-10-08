@@ -8,5 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class Aired(
     @SerializedName("from") val from: String?,
     @SerializedName("to") val to: String?,
-    @SerializedName("prop") val prop: AiredProp?
+    @SerializedName("prop") val prop: AiredProp?,
+    /** e.g. "Oct 2, 2026 to ?"; missing in data cached before it was added. */
+    @SerializedName("string") val stringValue: String? = null,
 ) : Parcelable

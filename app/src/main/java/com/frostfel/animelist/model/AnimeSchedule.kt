@@ -24,6 +24,23 @@ private fun Anime.startDate(): LocalDate? {
     return runCatching { LocalDate.of(year, month, day) }.getOrNull()
 }
 
+/** "2 days, 3 hours", "3 hours, 20 minutes" or "20 minutes" until [next]. */
+fun countdownText(context: Context, now: ZonedDateTime, next: ZonedDateTime): String {
+    val untilNext = Duration.between(now, next)
+    val days = untilNext.toDays().toInt()
+    val hours = (untilNext.toHours() % 24).toInt()
+    val minutes = (untilNext.toMinutes() % 60).toInt()
+    val resources = context.resources
+    val daysText = resources.getQuantityString(R.plurals.airing_days, days, days)
+    val hoursText = resources.getQuantityString(R.plurals.airing_hours, hours, hours)
+    val minutesText = resources.getQuantityString(R.plurals.airing_minutes, minutes, minutes)
+    return when {
+        days > 0 -> "$daysText, $hoursText"
+        hours > 0 -> "$hoursText, $minutesText"
+        else -> minutesText
+    }
+}
+
 fun Anime.getNextBroadcastString(context: Context, now: ZonedDateTime = ZonedDateTime.now()): String {
     val next = nextEpisodeAt(now) ?: return broadcast.stringValue ?: ""
     val untilNext = Duration.between(now, next)

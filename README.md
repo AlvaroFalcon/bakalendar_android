@@ -14,8 +14,10 @@ follows the Jikan v4 schema.
   to the next episode. The choice is remembered.
 - **Search, filters and sorting**: search by title; the filters sheet sorts by popularity or
   by soonest next episode and filters by one or more genres (anime matching any of them).
-- **Detail and trailers**: synopsis, genres and, when there is one, the trailer (opens in
-  YouTube). Drag the detail down to close it, or use the back gesture.
+- **Detail**: collapsing cover with the title, tinted with colours picked from the cover;
+  score, rank and episodes at a glance, next episode at your local time, trailer (opens in
+  YouTube), synopsis, studio, source, rating and more, plus a link to MyAnimeList. Drag it
+  down to close it, or use the back gesture.
 - **Favorites**: star any anime. Favorites are kept even after their season ends.
 - **Weekly calendar**: Monday to Sunday, what airs each day at your local time, optionally
   only your favorites. Open it from the menu in the top right corner.

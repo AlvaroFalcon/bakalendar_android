@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -15,12 +18,17 @@ import com.frostfel.animelist.testing.AppTestSetup
 import com.frostfel.animelist.testing.AppTestSetup.waitUntil
 import com.frostfel.animelist.testing.Fixtures
 import com.frostfel.animelist.views.utils.SwipeToDismissLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -80,7 +88,7 @@ class AnimeDetailActivityTest {
     fun noTrailerNoPlayer() {
         launch(withoutTrailer).use { scenario ->
             scenario.onActivity { activity ->
-                waitUntil { activity.findViewById<android.widget.TextView>(R.id.anime_title).text.isNotEmpty() }
+                waitUntil { activity.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar).title != null }
                 assertEquals(View.GONE, activity.findViewById<View>(R.id.trailer).visibility)
             }
         }
@@ -121,6 +129,67 @@ class AnimeDetailActivityTest {
                 layout.drag(distance = layout.height * 0.1f, durationMs = 1000)
                 waitUntil { layout.getChildAt(0).translationY == 0f }
                 assertFalse(activity.isFinishing)
+            }
+        }
+    }
+
+    private fun ChipGroup.texts() = (0 until childCount).map { (getChildAt(it) as Chip).text.toString() }
+
+    @Test
+    fun showsStatsNextEpisodeAndInformation() {
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                val stats = activity.findViewById<ChipGroup>(R.id.stats)
+                waitUntil { stats.childCount > 0 }
+                assertEquals(
+                    "Kusuriya no Hitorigoto 3rd Season",
+                    activity.findViewById<CollapsingToolbarLayout>(R.id.collapsingToolbar).title
+                )
+                assertEquals(listOf("8.65", "#90", "TV", "12 episodes", "Fall 2026"), stats.texts())
+                assertEquals(listOf("Drama", "Mystery"), activity.findViewById<ChipGroup>(R.id.genres).texts())
+
+                // Fridays 23:00 JST, currently airing: always has a next episode.
+                assertTrue(activity.findViewById<View>(R.id.nextEpisodeCard).isVisible)
+                assertTrue(activity.findViewById<TextView>(R.id.nextEpisodeWhen).text.endsWith("your time"))
+
+                val info = activity.findViewById<LinearLayout>(R.id.infoRows)
+                val text = (0 until info.childCount).mapNotNull { info.getChildAt(it) as? LinearLayout }
+                    .associate { row -> (row.getChildAt(0) as TextView).text.toString() to (row.getChildAt(1) as TextView).text.toString() }
+                assertEquals("The Apothecary Diaries Season 3", text["English title"])
+                assertEquals("OLM", text["Studios"])
+                assertEquals("Light novel", text["Source"])
+                assertEquals("Historical, Medical", text["Themes"])
+            }
+        }
+    }
+
+    @Test
+    fun favouriteButtonStarsTheAnime() {
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                val fab = activity.findViewById<ExtendedFloatingActionButton>(R.id.favoriteFab)
+                waitUntil { activity.findViewById<ChipGroup>(R.id.stats).childCount > 0 }
+                assertEquals("Add to favorites", fab.text.toString())
+
+                fab.performClick()
+                waitUntil { fab.text.toString() == "In favorites" }
+                assertTrue(runBlocking { db.animeDao().getAllFav() }.any { it.anime.malId == withTrailer.malId })
+            }
+        }
+    }
+
+    @Test
+    fun myAnimeListButtonAndReadMore() {
+        launch(withTrailer).use { scenario ->
+            scenario.onActivity { activity ->
+                waitUntil { activity.findViewById<ChipGroup>(R.id.stats).childCount > 0 }
+                activity.findViewById<View>(R.id.malButton).performClick()
+                assertEquals(withTrailer.url, shadowOf(activity).nextStartedActivity.dataString)
+
+                val description = activity.findViewById<TextView>(R.id.description)
+                assertEquals(5, description.maxLines)
+                activity.findViewById<View>(R.id.readMore).performClick()
+                assertEquals(Int.MAX_VALUE, description.maxLines)
             }
         }
     }

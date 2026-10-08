@@ -1,7 +1,7 @@
 package com.frostfel.animelist.views.anime_detail
 import android.os.Build
 import android.os.Bundle
-import android.widget.ScrollView
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -27,18 +27,19 @@ class AnimeDetailActivity : AppCompatActivity() {
     }
 
 
-    /** Drag down to close; the description keeps scrolling until it is back at the top. */
+    /**
+     * Drag down to close. While the content is scrolled or the cover is collapsed, a downward
+     * drag scrolls back first, as usual.
+     */
     private fun initSwipeToDismiss() {
         binding.dismissLayout.onDismiss = {
             finish()
             disableCloseAnimation()
         }
-        binding.dismissLayout.canScrollUp = { event ->
-            val scroll = findViewById<ScrollView>(R.id.scroll)
-            val location = IntArray(2)
-            scroll?.getLocationOnScreen(location)
-            scroll != null && scroll.canScrollVertically(-1) &&
-                event.rawY >= location[1] && event.rawY <= location[1] + scroll.height
+        binding.dismissLayout.canScrollUp = {
+            val scroll = findViewById<View>(R.id.scroll)
+            val appBar = findViewById<View>(R.id.appBar)
+            (scroll?.canScrollVertically(-1) == true) || (appBar != null && appBar.top < 0)
         }
     }
 

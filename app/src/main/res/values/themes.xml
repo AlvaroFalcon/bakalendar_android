@@ -22,6 +22,24 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="DetailExpandedTitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DetailCollapsedTitle" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="DetailSectionTitle">
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Searching" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">@color/black</item>
     </style>
